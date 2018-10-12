@@ -24,10 +24,17 @@ CREATE TABLE table_name
 
 Common types: 
 	- INT
+	- BIGINT
 	- VARCHAR(nElems)
 	- DECIMAL
+	- REAL
+	- FLOAT
+	- DOUBLE PRECISION
 	- CHAR
 	- DATE
+	- TIME
+	- TIMESTAMP
+
 
 Cualifiers availables:
 	- NOT NULL			-- This doesn't let insert elements with this atribute null
@@ -118,14 +125,129 @@ SELECT  atribute1_name, ... , atributen_name		-- Atributes we finally get
 -- If we don't want duplicates (Mostly used):
 SELECT DISTINCT atributes FROM tables WHERE conditions;
 
+-- If we want duplicates (default case):
+SELECT ALL atributes FROM tables WHERE conditions;
+
+-- If an atribute name is repeated we use "table_name." + "atribute_name":
+SELECT tablei.atribute FROM table1, ... , tablei, ... , tablen WHERE conditions;
+
+3.2.- Set operators:
+-- These always operate taking sql sentences, we can't use:
+-- table1_name union table2_name NOT ALLOWED!
+-- It's also remarcable that these operators delete duplicates.
+
+-- Union:
+SELECT * FROM table1_name UNION     SELECT * FROM table2_name;
+
+-- Intersection:
+SELECT * FROM table1_name INTERSECT SELECT * FROM table2_name;
+
+-- Difference:
+SELECT * FROM table1_name EXCEPT    SELECT * FROM table2_name;
+
+3.3.- Rows selection, conditions:
+
+-- Inside a where clause we can specify some selection conditions for the rows of our
+-- relation. Wich conditions are allowed? How can we specify those conditions?
+WHERE ~ Tuples selection predicates ~
+
+- Comparation:           <,>,<=,>=,=,<> (means distinct in sql)
+- Range:                 BETWEEN, NOT BETWEEN	
+- Null condition:        IS NULL, IS NOT NULL
+- Content:               IN, NOT IN 			-- Needs example IN SET ~ IN (1,5,10)
+- About other relations: ALL, SOME/ANY
+- Existence condition:   EXISTS 
+- Pattern identifyer:    LIKE, NOT LIKE 		-- Needs example LIKE PATTERN ~ LIKE '_D%' means second character is 'D'
+- Multiple conditions:   AND, OR
 
 
+3.4.- Ordered output:
+
+-- We can specify the atributes we can order by and if we want to order ascendently or
+-- descendently. This operation might have a really high time cost.
+ORDER BY ~ Atributes and modifyers ~
+
+ORDER BY atributei ASC, ... , atributej DESC;	-- This request are the same,
+ORDER BY atributei    , ... , atributej DESC;	-- Default ordenation is ascendent
+
+3.5.- Rename of relations and atributes:
+
+-- To rename some atributes in an expresion we use "AS":
+SELECT atribute1_name AS atribute1_newName, ... , atributen_name AS atributen_newName ...
+
+-- Sometimes, a relation gets involved more than once in a request, we need to rename it,
+-- for doing this we just write the new identifyer next to the table name in the from:
+SELECT atributes FROM table1_name table1_newName, ... , tablek_name tablek_newName ...
+
+3.6.- Expresions:
+-- Many times we won't need an atribute but we'll need a function involving many atributes,
+-- we then will have to use agregation functions (we'll discuss about them later) and expressions
+-- such as aritmetic functions or literals. We can also use this expressions inside a condition.
+
+- Aritmetic operators: 		+,-,*,/
+- Mathematics functions:	abs, power, %, floor, ceiling, round, trunc	-- Floor gets higher int <= value
+- String functions: 		lower, upper, rtrim, ltrim, substring, +	-- Ltrim deletes the blank spaces at 
+																		-- the front of the string
+
+3.7.- Consulting many tables:
+------DUDA! Consulting? requesting?
+-- Inside the from clause we can specify more than one relation to be considered, this will be
+-- considered as a cartesian product in relational algebra. Another important point is that inside
+-- the from clause we can also rename a relation, this is necessary when we are doing an inside table
+-- request.
+
+-- Simple cartesian product:
+SELECT atributes FROM table1_name, ... , tablen_name;
+
+-- Join, cartesian product and conditions:
+SELECT atributes FROM table1_name, ... , tablen_name WHERE conditions;
+
+-- Outer join, join without loss of information (mostly present in from clause):
+table1_name INNER JOIN       table2_name ON conditions;	-- Tuples on the cartesian product that check the condition
+table1_name LEFT OUTER JOIN  table2_name ON conditions;	-- Not losing table1_name information 
+table1_name RIGHT OUTER JOIN table2_name ON conditions; -- Not losing table2_name information
+table1_name FULL OUTER JOIN  table2_name ON conditions; -- Not losing information from both tables
+
+-- Natural join, equal atributes names equal values (mostly present in from clause):
+-- We can choose the atributes to consider in the natural join, and avoid loss of information.
+table1_name NATURAL JOIN table2_name;
+table1_name NATURAL JOIN table2_name USING atributei_name, ... , atributej_name;
+table1_name NATURAL JOIN table2_name ON conditions;
+table1_name NATURAL RIGHT OUTER JOIN table2_name ON conditions; 
 
 
+3.8.- Agregation functions and group by:
+-- Functions that acts taking the colums of relations, considering atributes. We can specify the
+-- colums to consider and how to group the other atributes.
 
+Agregation functions:
+	- SUM()	-- Just for numbers
+	- AVG()	-- Just for numbers
+	- MIN()
+	- MAX()
+	- COUNT(*) 					-- Number of tuples verifying a condition (also null values)
+	- COUNT(atribute_name)		-- Number of values in a column.
+	- COUNT(DISTINCT atribute)	-- Number of distinct values in a column.
 
+Group_by:
+-- We use this to use the agregate functions over specific groups. We can select only the groups
+-- of atributes verifying some condition using a having clause.
 
+SELECT atributes, agregation functions AS column names
+  FROM tables
+ WHERE conditions
 
+GROUP BY atributes
+HAVING   conditions
 
+-- This group the relation by the atributes in group by using only the tuples verifying the where
+-- condition. Then this gets the values for the atributes and agregation functions in select list
+-- and finally gets only those that verify the having conditions.
 
+3.9.- Select instruction execution:
 
+	1.  Get only the tuples verifying where clause.
+	2.  Group these by the atributes in group_by clause.
+	3.  Get only those groups verifying having clause.
+	4.  Calculate the agregation functions necessaries.
+	5.  Order the tuples following the order_by clause.
