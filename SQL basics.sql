@@ -251,3 +251,8 @@ HAVING   conditions
 	3.  Get only those groups verifying having clause.
 	4.  Calculate the agregation functions necessaries.
 	5.  Order the tuples following the order_by clause.
+
+
+
+4.- VIEWS VS TABLES:
+-- A table (or relation) is a data schema storing information. A view is going to be 
