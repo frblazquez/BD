@@ -253,6 +253,75 @@ HAVING   conditions
 	5.  Order the tuples following the order_by clause.
 
 
+4.- SUBREQUESTS:
+-- DUDA! revisar el inglés!!
+-- A subrequest is nothing else than a select clause inside another select instruction. This 
+-- subrequest can be placet at select projection list, from or even the where.
 
-4.- VIEWS VS TABLES:
+-- Subrequest in the projection list:
+SELECT atribute1, ... , (SELECT olny_atribute FROM ...) 
+FROM   tables 
+WHERE  conditions;
+
+-- Subrequest as tables in the from clause:
+SELECT atributes 
+FROM   table1, ... , (SELECT atributes FROM ...) AS tablen_name 
+WHERE  conditions;
+
+-- Subrequest as condition element in the where clause:
+SELECT atributes
+FROM   tables
+WHERE  elem1 condition (SELECT atributes FROM ...);
+
+-- For subrequests returning only one value we can use comparators <>, =, <= ...
+-- For subrequests more complicated we can use IN, NOT IN, SOME, ANY, and ALL.
+SELECT atributes 
+FROM   tables 
+WHERE  elem IN (SELECT atribute FROM ...)
+
+SELECT atributes 
+FROM   tables
+WHERE  elem condition ALL (SELECT atribute FROM ...)
+
+-- Correlationed requests, we need to refer in the subrequest to the request:
+SELECT atributes 
+FROM   table t   						-- We rename the relation 
+WHERE  condition (subrequest) 			-- now we can refer to the request table in the subrequest
+
+-- Correlationed request with exists:
+SELECT atributes 
+FROM   table t
+WHERE  EXISTS (SELECT elements FROM tablek WHERE condition(subrequest))
+
+
+5.- VIEWS VS TABLES:
 -- A table (or relation) is a data schema storing information. A view is going to be 
+-- an operation involving tables. Then when using a table we use directly stored data
+-- but every time we use a view the system will need to execute an operation to get the 
+-- result.
+-- Views will be useful for protecting data stored to some users and also to get a safer
+-- system by don't letting users to modify de db schema.
+
+CREATE VIEW view_name AS (expression) 
+
+-- Dependence among views:
+CREATE VIEW view1 AS (expression using view2)  -- view1 depends directly on view2
+CREATE VIEW viewk AS (expression using views)  -- viewk depends on all used views or their dependences
+CREATE VIEW viewR AS (expression using viewR)  -- Recursive view definition
+
+-- The problem of actualicing the views, what to do?
+
+-- Materialized views, physical copy containing the result of an expresion:
+CREATE MATERIALIZED VIEW view1 AS (expression) -- Need to maintain the view updated
+
+-- Local views, views for just one sql instruction
+WITH 
+localView1(atribute11, ... , atribute1k) AS expression
+localView2(atribute21, ... , atribute2i) AS expression
+...				...				 ...				...
+localViewn(atributen1, ... , atributenj) AS expression
+request(involving localViews);
+
+
+6.- SQL RECURSIVE:
+-- Examples for this time, it's complicated to see a general schema.
