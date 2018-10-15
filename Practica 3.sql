@@ -109,13 +109,6 @@ create view vista4 as
 (select código   from proyectos) except 
 (select códigopr from analistas inner join distribución on dni=dniemp);
 
--- create view vista4b as 
---
--- select proyectos.código
--- from proyectos,analistas inner join distribución on dni = dniemp as A
--- where código not in (select códigopr from A);
-
-
 -- 3.5.- Dni de los analistas que dirijan proyectos pero que no sean programadores:
 create view vista5 as ((select dni from analistas) except    -- Dni de analistas
 					   (select *   from vista2))   intersect -- Menos los que son programadores
@@ -171,22 +164,20 @@ create view vista11 as select dni,nombre from empleados where teléfono is null;
 --  ------------------------ <  media(---------------------------)
 --  (num proyectos  trabaja)          (numero empleados proyecto)
 
-create view segundoTermino as
+create view segundoTermino(media) as
 
-select avg(cociente) as media from (
+(select avg(cociente) from (
 	select códigopr, (sum(horas)/count(dniemp)) as cociente
 	from distribución
-	group by códigopr);
+	group by códigopr));
 
-create view empleadosNumProyectos as
+create view empleadosNumProyectos(dniemp,numProyectos) as
 
-select dniemp,count(*) as numProyectos
+(select dniemp,count(*) as numProyectos
 from distribución
-group by dniemp;
-
+group by dniemp);
 
 create view vista12 as
-
 select dni
 from vista9,empleadosNumProyectos,segundoTermino
 where dni=dniemp and (sumaHoras/numProyectos < media);
@@ -217,21 +208,19 @@ where dniemp not in
 
 
 -- 3.16.- Empleados que dependen de evaristo (son dirigidos por él o alguién que depende de Evaristo):
-with dnisDependenEvaristo(dni) as
+create view vista16 as
 
-(select dniemp
-from distribución
-where códigopr in (select código from proyectos where dnidir='5')
+with proyectosDependenEvaristo(código) as
+(
+(select código from proyectos where dnidir='5')
+union 
+(select código from proyectos where dnidir in 							-- El dni del director
+ 					(select dniemp from distribución where códigopr in 	-- Es el dni de un empleado
+                    (select * from proyectosDependenEvaristo)))		-- De un proyecto que depende de Evaristo
+)		
 
-union all
-
-select dniemp 
-from distribución
-where códigopr in (select código from proyectos,dnisDependenEvaristo where dni=dnidir))
-
-select nombre 
-from empleados natural join dnisDependenEvaristo
-where dni<>'5';
+select nombre from empleados,distribución 
+where dni=dniemp and dniemp<>'5' and códigopr in (select * from proyectosDependenEvaristo);
 
 -- 4.- Mostramos las vistas:
 select * from vista1;
@@ -249,7 +238,8 @@ select * from vista12;
 --select * from vista13;
 select * from vista14;
 select * from vista15;
---select * from vista16;
+select * from vista16;
 
 /multiline off
 /datalog 
+

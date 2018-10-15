@@ -43,13 +43,11 @@ Cualifiers availables:
 	- FOREIGN KEY 		-- For elements that are keys in another table
 	- REFERENCES 		-- If the element marked as reference is not in the reference table
 						-- we don't let inserting it
-	
-	-- DUDA! don't let inserting? insert? to insert?
+
 
 2.- DATA MODIFICATION LANGUAGE:
 
-2.1 - Tables and relations schema modification and deletion:
-	-- DUDA! deletion??
+2.1 - Tables and relations schema modification and removal:
 
 -- To add a new field (not inserting element):
 ALTER TABLE table_name ADD atribute_name type;
@@ -71,8 +69,7 @@ DELETE FROM table_name;	-- DUDA! No borra el esquema pero sí todas las tuplas ¿n
 DELETE FROM table_name WHERE conditions;
 
 -- To modify the tuples of the relation:
----- We can update all the tuples or just those that verify a condition.
-	-- DUDA! those that?? no creo que sea correcto
+---- We can update all the tuples or just those verifying a condition.
 UPDATE table_name SET atributei = expresioni, ... , atributej = expresionj;
 UPDATE table_name SET atributes = expresions WHERE conditions;
 
@@ -142,7 +139,7 @@ SELECT * FROM table1_name UNION     SELECT * FROM table2_name;
 -- Intersection:
 SELECT * FROM table1_name INTERSECT SELECT * FROM table2_name;
 
--- Difference:
+-- Difference (use except! don't use difference):
 SELECT * FROM table1_name EXCEPT    SELECT * FROM table2_name;
 
 3.3.- Rows selection, conditions:
@@ -189,8 +186,7 @@ SELECT atributes FROM table1_name table1_newName, ... , tablek_name tablek_newNa
 - String functions: 		lower, upper, rtrim, ltrim, substring, +	-- Ltrim deletes the blank spaces at 
 																		-- the front of the string
 
-3.7.- Consulting many tables:
-------DUDA! Consulting? requesting?
+3.7.- Quering several tables:
 -- Inside the from clause we can specify more than one relation to be considered, this will be
 -- considered as a cartesian product in relational algebra. Another important point is that inside
 -- the from clause we can also rename a relation, this is necessary when we are doing an inside table
@@ -215,6 +211,7 @@ table1_name NATURAL JOIN table2_name USING atributei_name, ... , atributej_name;
 table1_name NATURAL JOIN table2_name ON conditions;
 table1_name NATURAL RIGHT OUTER JOIN table2_name ON conditions; 
 
+-- If we aren't in a from clause we need to specify the select * from before a relation.
 
 3.8.- Agregation functions and group by:
 -- Functions that acts taking the colums of relations, considering atributes. We can specify the
