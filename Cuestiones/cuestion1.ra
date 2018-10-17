@@ -1,0 +1,71 @@
+-- Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es
+--
+-- Doble grado Ingeniería informática-Matemáticas.
+-- Universidad Complutense de Madrid.
+--
+-- Descripción: Hallar utilizando solamente herramientas del álgebra relacional
+-- el patrón de barco que hizo la reserva más antigua.
+
+
+/abolish
+/type_casting on
+
+create table patrones(id_patron string primary key, nombre string, titulo string, edad integer);
+insert into patrones(id_patron, nombre, titulo, edad) values('1','Jacinto','CY',45);
+insert into patrones(id_patron, nombre, titulo, edad) values('2','Herminia','PY',35);
+insert into patrones(id_patron, nombre, titulo, edad) values('3','Calixto','PER',22);
+insert into patrones(id_patron, nombre, titulo, edad) values('4','Teodora','PER',29);
+insert into patrones(id_patron, nombre, titulo, edad) values('5','Vicente','PNB',29);
+
+create table barcos(id_barco string primary key, nombre_barco string, color string);
+insert into barcos(id_barco, nombre_barco, color) values('1','Albatros','blanco');
+insert into barcos(id_barco, nombre_barco, color) values('2','Bravo','blanco');
+insert into barcos(id_barco, nombre_barco, color) values('3','Coral','rojo');
+insert into barcos(id_barco, nombre_barco, color) values('4','Dorada','blanco');
+insert into barcos(id_barco, nombre_barco, color) values('5','Exodus','azul');
+
+create table reservas(id_patron string references patrones, id_barco string references barcos, fecha date, primary key (id_patron, id_barco, fecha));
+insert into reservas(id_patron, id_barco, fecha) values('1','1','2014-06-01');
+insert into reservas(id_patron, id_barco, fecha) values('1','2','2014-06-07');
+insert into reservas(id_patron, id_barco, fecha) values('1','4','2014-08-12');
+insert into reservas(id_patron, id_barco, fecha) values('2','4','2014-07-20');
+insert into reservas(id_patron, id_barco, fecha) values('3','1','2014-08-05');
+insert into reservas(id_patron, id_barco, fecha) values('3','3','2014-09-16');
+insert into reservas(id_patron, id_barco, fecha) values('3','1','2014-06-11');
+insert into reservas(id_patron, id_barco, fecha) values('3','5','2014-07-13');
+insert into reservas(id_patron, id_barco, fecha) values('4','4','2014-08-22');
+insert into reservas(id_patron, id_barco, fecha) values('4','5','2014-09-03');
+
+-- OBSERVACIONES:
+--
+-- Entendemos por "hizo la reserva más antigua" como que fué el que hace más tiempo que
+-- hizo la reserva y que por tanto es el que tiene más cercana la disponibilidad de un
+-- barco.
+--
+-- Me he permitido el lujo de usar un natural join por no ser más que un producto cartesiano
+-- con select y proyección, todo permitido en el álgebra relacional básica.
+--
+-- No he exigido que las fechas no sean null pues forman parte de la clave primaria, en el caso
+-- de los nombres tampoco lo he exigido simplemente porque es el campo requerido aunque estos sí
+-- que podrían tomar valor null.
+
+-- RESOLUCIÓN:
+-- 1.- Obtener la relación de nombres de patrones y próximas reservas:
+idPatron_nombre_fecha := project id_patron,fecha (reservas) njoin project id_patron,nombre (patrones);
+nombrePatron_fechaReserva := project nombre,fecha (idPatron_nombre_fecha);
+
+-- 2.- Obtener la menor de las fechas de reserva:
+fechasReserva  := project fecha (reservas);
+fechasReserva2 := rename fechasReserva2(fecha2) (fechasReserva);
+fechasMayores  := project fecha (fechasReserva zjoin fecha>fecha2 fechasReserva2);
+-- fechasMayores son todas las fechas que tienen otra fecha de reserva menor, no las queremos.
+menorFecha     := fechasReserva difference fechasMayores;
+
+-- 3.- Obtener el nombre de los patrones que tienen reserva el día de la menor fecha, esto es,
+--     aquellos que reservaron hace más tiempo:
+vista1 := project nombre (idPatron_nombre_fecha njoin menorFecha);
+
+-- 4.- Mostrar la solución obtenida:
+select true (vista1);
+
+

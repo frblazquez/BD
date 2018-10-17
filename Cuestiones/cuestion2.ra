@@ -1,0 +1,81 @@
+-- FRANCISCO JAVIER BLÁZQUEZ MARTÍNEZ  ~  frblazqu@ucm.es
+--
+--   Doble grado Ingeniería informática - Matemáticas
+--	 Universidad Complutense de Madrid.
+--
+--
+-- CUESTIÓN: Nombre de los barcos con mayor número de reservas (usando herramientas de AR clásica):
+--
+--
+-- Comentarios:
+-- 
+-- La idea seguida en la resolución de la cuestión es la siguiente. Si conseguimos llegar a una
+-- relación con los ids de los barcos relacionados con ids de barcos con mayor número de reservas,
+-- tendremos los ids en la primera columna de todos los barcos con al menos uno que les supera en
+-- número de reservas. Por tanto, el complementario (respecto a los ids de los barcos en reservas)
+-- son los ids de los barcos buscados. Para esto:
+-- 
+--	1.- Ids de los barcos con mayor o igual número de reservas que 3,2,1.
+--  2.- Ids de los barcos con exactamente 3,2 y 1 reservas.
+-- 	3.- Construir la relación anteriormente descrita.
+--	4.- Proyectar el nombre de los barcos cuyo id no esté en la primera columna de esta.
+
+/abolish
+/type_casting on
+
+create table patrones(id_patron string primary key, nombre string, titulo string, edad integer);
+insert into patrones(id_patron, nombre, titulo, edad) values('1','Jacinto','CY',45);
+insert into patrones(id_patron, nombre, titulo, edad) values('2','Herminia','PY',35);
+insert into patrones(id_patron, nombre, titulo, edad) values('3','Calixto','PER',22);
+insert into patrones(id_patron, nombre, titulo, edad) values('4','Teodora','PER',29);
+insert into patrones(id_patron, nombre, titulo, edad) values('5','Vicente','PNB',29);
+
+create table barcos(id_barco string primary key, nombre_barco string, color string);
+insert into barcos(id_barco, nombre_barco, color) values('1','Albatros','blanco');
+insert into barcos(id_barco, nombre_barco, color) values('2','Bravo','blanco');
+insert into barcos(id_barco, nombre_barco, color) values('3','Coral','rojo');
+insert into barcos(id_barco, nombre_barco, color) values('4','Dorada','blanco');
+insert into barcos(id_barco, nombre_barco, color) values('5','Exodus','azul');
+
+create table reservas(id_patron string references patrones, id_barco string references barcos, fecha date, primary key (id_patron, id_barco, fecha));
+insert into reservas(id_patron, id_barco, fecha) values('1','1','2014-06-01');
+insert into reservas(id_patron, id_barco, fecha) values('1','2','2014-06-07');
+insert into reservas(id_patron, id_barco, fecha) values('1','4','2014-08-12');
+insert into reservas(id_patron, id_barco, fecha) values('2','4','2014-07-20');
+insert into reservas(id_patron, id_barco, fecha) values('3','1','2014-08-05');
+insert into reservas(id_patron, id_barco, fecha) values('3','3','2014-09-16');
+insert into reservas(id_patron, id_barco, fecha) values('3','1','2014-06-11');
+insert into reservas(id_patron, id_barco, fecha) values('3','5','2014-07-13');
+insert into reservas(id_patron, id_barco, fecha) values('4','4','2014-08-22');
+insert into reservas(id_patron, id_barco, fecha) values('4','5','2014-09-03');
+
+
+-- CUESTIÓN: Nombre de los barcos con mayor número de reservas (usando herramientas de AR clásica):
+
+idBarco_nombre := project id_barco,nombre_barco (barcos); -- Barcos y nombre
+idBarco_fecha  := project id_barco,fecha (reservas);	  -- Barcos y reserva
+idBarcos 	   := project id_barco (barcos);			  -- Id de todos los barcos
+
+idBarco_fecha2 := rename idBarco_fecha2(id_barco, fecha2) (idBarco_fecha);		
+idBarco_fecha3 := rename idBarco_fecha3(id_barco, fecha3) (idBarco_fecha);		
+
+-- Barcos con al menos dos y tres reservas
+barcos2Reservas := select fecha!=fecha2 ((idBarco_fecha) njoin (idBarco_fecha2));
+barcos3Reservas := select fecha!=fecha3 and fecha2!=fecha3 ((barcos2Reservas) njoin (idBarco_fecha3));
+
+-- Barcos con exactamente tres, dos y una reservas
+idBarcosExactamente3Reservas := project id_barco (barcos3Reservas);
+idBarcosExactamente2Reservas := project id_barco (barcos2Reservas) difference select true (idBarcosExactamente3Reservas);
+idBarcosExactamente1Reserva  := project id_barco(barcos) difference project id_barco (barcos2Reservas);
+
+-- aRb <=>def el número de reservas de a es menor que el número de reservas de b
+barcos2barcos3 := (idBarcosExactamente2Reservas product (rename r(id) (idBarcosExactamente3Reservas)));
+barcos1barcos3 := (idBarcosExactamente1Reserva  product (rename r(id) (idBarcosExactamente3Reservas)));
+barcos1barcos2 := (idBarcosExactamente1Reserva  product (rename r(id) (idBarcosExactamente2Reservas)));
+relacionBarcoBarcoconMasReservas := barcos2barcos3 union (barcos1barcos3 union barcos1barcos2);
+
+-- Obtentemos los barcos con número de reservas máximo
+barcosMaxReservas := idBarcos difference (project id_barco (relacionBarcoBarcoconMasReservas));
+
+vista1 := project nombre_barco (idBarco_nombre njoin barcosMaxReservas);
+
