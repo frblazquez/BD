@@ -1,4 +1,4 @@
--- Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es
+-- Francisco Javier BlÃ¡zquez MartÃ­nez ~ frblazqu@ucm.es
 --
 -- Double degree in Mathematics-Computer engineering.
 -- Complutense university, Madrid.
@@ -60,12 +60,12 @@ ALTER TABLE table_name DROP atribute_name;
 
 -- To delete a whole table (CAUTION!):
 DROP TABLE  table_name;
-	-- DUDA! las tablas a las que referencia deben ser borradas antes?? Si. ¿Por qué?
+	-- DUDA! las tablas a las que referencia deben ser borradas antes?? Si. Â¿Por quÃ©?
 
 2.2.- Tables and relations content modification and deletion:
 
 -- To delete elements:
-DELETE FROM table_name;	-- DUDA! No borra el esquema pero sí todas las tuplas ¿no?
+DELETE FROM table_name;	-- DUDA! No borra el esquema pero sÃ­ todas las tuplas Â¿no?
 DELETE FROM table_name WHERE conditions;
 
 -- To modify the tuples of the relation:
@@ -109,7 +109,7 @@ SELECT atribute1_name, ... , atributen_name			-- Projection list, atributes or e
   HAVING   condition1, ....... , conditionl			-- Atributes selection condition
   													--
   ORDER BY atributer_name, ... , atributep_name;	-- Atributes name to order (descending default)
-  														--DUDA! Repasito de inglés a esta parte
+  														--DUDA! Repasito de inglÃ©s a esta parte
 
 -- All rows proyection:
 SELECT * FROM table_name;
@@ -251,7 +251,7 @@ HAVING   conditions
 
 
 4.- SUBREQUESTS:
--- DUDA! revisar el inglés!!
+-- DUDA! revisar el inglÃ©s!!
 -- A subrequest is nothing else than a select clause inside another select instruction. This 
 -- subrequest can be placet at select projection list, from or even the where.
 

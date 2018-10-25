@@ -1,78 +1,78 @@
--- FRANCISCO JAVIER BL¡ZQUEZ MARTÕNEZ  ~  frblazqu@ucm.es
---   Doble grado IngenierÌa inform·tica - Matem·ticas
+-- FRANCISCO JAVIER BL√ÅZQUEZ MART√çNEZ  ~  frblazqu@ucm.es
+--   Doble grado Ingenier√≠a inform√°tica - Matem√°ticas
 --
 -- Comentarios:
 -- Aparecen muchos warning causados por el hecho de que he llamado igual a las variables auxiliares que he 
--- usado para simplificar el coste de ejecuciÛn en varios apartados. He usado el natural join en vez de el
--- zjoin (x and select) en varios casos por lo que puede que haya abusado del rename, la ˙nica operaciÛn que
+-- usado para simplificar el coste de ejecuci√≥n en varios apartados. He usado el natural join en vez de el
+-- zjoin (x and select) en varios casos por lo que puede que haya abusado del rename, la √∫nica operaci√≥n que
 -- me daba problemas serios al reutilizar nombres de variables.
 --
 --
--- En esta versiÛn no aparecen los warnings debido a que he renombrado las variables que se repetÌan. No me
--- queda del todo claro que causaba el error, por quÈ al pedir que se muestre una vista no tiene el mismo
--- valor que se le asignÛ simplemente porque se cambien las variables intermedias.
+-- En esta versi√≥n no aparecen los warnings debido a que he renombrado las variables que se repet√≠an. No me
+-- queda del todo claro que causaba el error, por qu√© al pedir que se muestre una vista no tiene el mismo
+-- valor que se le asign√≥ simplemente porque se cambien las variables intermedias.
 
--- 0.- Eliminamos todos los datos que pudiÈramos tener
+-- 0.- Eliminamos todos los datos que pudi√©ramos tener
 /abolish
 
 -- 1.- Definimos las tablas que vamos a necesitar.
-create table programadores(dni string primary key, nombre string, direcciÛn string, telÈfono string);
-create table analistas    (dni string primary key, nombre string, direcciÛn string, telÈfono string);
-create table distribuciÛn(cÛdigopr string, dniemp string, horas int, primary key (cÛdigopr, dniemp));
-create table proyectos(cÛdigo string primary key, descripciÛn string, dnidir string);
+create table programadores(dni string primary key, nombre string, direcci√≥n string, tel√©fono string);
+create table analistas    (dni string primary key, nombre string, direcci√≥n string, tel√©fono string);
+create table distribuci√≥n(c√≥digopr string, dniemp string, horas int, primary key (c√≥digopr, dniemp));
+create table proyectos(c√≥digo string primary key, descripci√≥n string, dnidir string);
 
 -- 2.- Introducimos los datos en nuestra base.
-insert into  programadores(dni, nombre, direcciÛn, telÈfono) values('1','Jacinto','JazmÌn 4','91-8888888');
-insert into  programadores(dni, nombre, direcciÛn, telÈfono) values('2','Herminia','Rosa 4','91-7777777');
-insert into  programadores(dni, nombre, direcciÛn, telÈfono) values('3','Calixto','Clavel 3','91-1231231');
-insert into  programadores(dni, nombre, direcciÛn, telÈfono) values('4','Teodora','Petunia 3','91-6666666');
+insert into  programadores(dni, nombre, direcci√≥n, tel√©fono) values('1','Jacinto','Jazm√≠n 4','91-8888888');
+insert into  programadores(dni, nombre, direcci√≥n, tel√©fono) values('2','Herminia','Rosa 4','91-7777777');
+insert into  programadores(dni, nombre, direcci√≥n, tel√©fono) values('3','Calixto','Clavel 3','91-1231231');
+insert into  programadores(dni, nombre, direcci√≥n, tel√©fono) values('4','Teodora','Petunia 3','91-6666666');
 
-insert into  analistas(dni, nombre, direcciÛn, telÈfono) values('4','Teodora','Petunia 3','91-6666666');
-insert into  analistas(dni, nombre, direcciÛn, telÈfono) values('5','Evaristo','Luna 1','91-1111111');
-insert into  analistas(dni, nombre, direcciÛn, telÈfono) values('6','Luciana','J˙piter 2','91-8888888');
-insert into  analistas(dni, nombre, direcciÛn, telÈfono) values('7','Nicodemo','PlutÛn 3', NULL);
+insert into  analistas(dni, nombre, direcci√≥n, tel√©fono) values('4','Teodora','Petunia 3','91-6666666');
+insert into  analistas(dni, nombre, direcci√≥n, tel√©fono) values('5','Evaristo','Luna 1','91-1111111');
+insert into  analistas(dni, nombre, direcci√≥n, tel√©fono) values('6','Luciana','J√∫piter 2','91-8888888');
+insert into  analistas(dni, nombre, direcci√≥n, tel√©fono) values('7','Nicodemo','Plut√≥n 3', NULL);
 
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P1','1',10);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P1','2',40);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P1','4',5);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P2','4',10);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P3','1',10);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P3','3',40);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P3','4',5);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P3','5',30);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P4','4',20);
-insert into distribuciÛn(cÛdigopr, dniemp, horas) values('P4','5',10);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P1','1',10);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P1','2',40);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P1','4',5);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P2','4',10);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P3','1',10);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P3','3',40);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P3','4',5);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P3','5',30);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P4','4',20);
+insert into distribuci√≥n(c√≥digopr, dniemp, horas) values('P4','5',10);
 
-insert into proyectos(cÛdigo, descripciÛn, dnidir) values('P1','NÛmina','4');
-insert into proyectos(cÛdigo, descripciÛn, dnidir) values('P2','Contabilidad','4');
-insert into proyectos(cÛdigo, descripciÛn, dnidir) values('P3','ProducciÛn','5');
-insert into proyectos(cÛdigo, descripciÛn, dnidir) values('P4','Clientes','5');
-insert into proyectos(cÛdigo, descripciÛn, dnidir) values('P5','Ventas','6');
+insert into proyectos(c√≥digo, descripci√≥n, dnidir) values('P1','N√≥mina','4');
+insert into proyectos(c√≥digo, descripci√≥n, dnidir) values('P2','Contabilidad','4');
+insert into proyectos(c√≥digo, descripci√≥n, dnidir) values('P3','Producci√≥n','5');
+insert into proyectos(c√≥digo, descripci√≥n, dnidir) values('P4','Clientes','5');
+insert into proyectos(c√≥digo, descripci√≥n, dnidir) values('P5','Ventas','6');
 
 -- 3.- Realizamos las consultas
 vista1 := project dni (programadores) union     project dni (analistas);
 vista2 := project dni (programadores) intersect project dni (analistas);
-vista3 := (vista1 difference project dnidir (proyectos)) difference project dniemp (distribuciÛn);
+vista3 := (vista1 difference project dnidir (proyectos)) difference project dniemp (distribuci√≥n);
 
-r1 := project cÛdigo (proyectos);				-- Todos los cÛdigos de proyectos
-r2 := project cÛdigopr,dniemp (distribuciÛn);	-- CÛdigos de proyecto y dni empleados
+r1 := project c√≥digo (proyectos);				-- Todos los c√≥digos de proyectos
+r2 := project c√≥digopr,dniemp (distribuci√≥n);	-- C√≥digos de proyecto y dni empleados
 r3 := project dni (analistas);					-- Dni de todos los analistas
-r4 := rename r4(cÛdigopr,dni) (r2);				-- Solo para evitar redundancia (se puede hacer con zjoin)
-r5 := r4 njoin r3;								-- Nos quedamos con pares cÛdigoproyecto-analista en Èl
-vista4 := r1 difference (project cÛdigopr (r5));
+r4 := rename r4(c√≥digopr,dni) (r2);				-- Solo para evitar redundancia (se puede hacer con zjoin)
+r5 := r4 njoin r3;								-- Nos quedamos con pares c√≥digoproyecto-analista en √©l
+vista4 := r1 difference (project c√≥digopr (r5));
 vista5 := (project dni (analistas) difference vista2) intersect project dnidir (proyectos);
 
-p1 := project cÛdigo,descripciÛn (proyectos); 		-- No queremos a los directores de proyectos
-p2 := rename p2(cÛdigo,dni,horas) (distribuciÛn);	-- Preparamos un njoin (para no hacer un zjoin)
-p3 := project dni,nombre (programadores);			-- No queremos la direcciÛn ni el tlf de los prog.
-p4 := p2 njoin p1;									-- Juntamos descripciÛn-horas-dni del empleado
-p5 := p4 njoin p3;									-- Juntamos el nombre del empleado (ya sobra cÛdigo)
-vista6 := project descripciÛn,nombre,horas (p5);
+p1 := project c√≥digo,descripci√≥n (proyectos); 		-- No queremos a los directores de proyectos
+p2 := rename p2(c√≥digo,dni,horas) (distribuci√≥n);	-- Preparamos un njoin (para no hacer un zjoin)
+p3 := project dni,nombre (programadores);			-- No queremos la direcci√≥n ni el tlf de los prog.
+p4 := p2 njoin p1;									-- Juntamos descripci√≥n-horas-dni del empleado
+p5 := p4 njoin p3;									-- Juntamos el nombre del empleado (ya sobra c√≥digo)
+vista6 := project descripci√≥n,nombre,horas (p5);
 
-q1 := project dni,telÈfono (programadores) union project dni,telÈfono (analistas); -- Dnis y tlfs.
+q1 := project dni,tel√©fono (programadores) union project dni,tel√©fono (analistas); -- Dnis y tlfs.
 q2 := rename q2(dnie, telf) (q1);											       -- Copiamos
-q3 := q2 zjoin dni!=dnie and telÈfono=telf q1;	      -- Aparecen duplicados!!     -- Buscamos los repets.
-vista7 := project telÈfono (q3);
+q3 := q2 zjoin dni!=dnie and tel√©fono=telf q1;	      -- Aparecen duplicados!!     -- Buscamos los repets.
+vista7 := project tel√©fono (q3);
 
 -- 4.- Mostramos el resultado obtenido
 select true (vista1);

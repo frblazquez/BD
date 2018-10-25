@@ -1,22 +1,22 @@
--- FRANCISCO JAVIER BL罿QUEZ MART蚇EZ  ~  frblazqu@ucm.es
+-- FRANCISCO JAVIER BL脕ZQUEZ MART脥NEZ  ~  frblazqu@ucm.es
 -- MANUEL ORTEGA SALVADOR              ~  manuor01@ucm.es
 --
---   Doble grado Ingenier韆 inform醫ica - Matem醫icas
+--   Doble grado Ingenier铆a inform谩tica - Matem谩ticas
 --	 Universidad Complutense de Madrid.
 --
 -- Comentarios:
 -- 
 -- Hemos optado por convenio nombrar a las tablas de forma que cada barra baja '_' separe los atributos
--- de esta relaci髇 y se representen los nombres de los atributos lo m醩 fielmente posible. De esta forma
--- la relaci髇 de empleados y proyectos en los que trabajan se podr韆 nombrar "dniEmp_c骴igoPr".
+-- de esta relaci贸n y se representen los nombres de los atributos lo m谩s fielmente posible. De esta forma
+-- la relaci贸n de empleados y proyectos en los que trabajan se podr铆a nombrar "dniEmp_c贸digoPr".
 
--- 0.- Eliminaci髇 de tablas anteriores y configuraci髇 para SQL:
+-- 0.- Eliminaci贸n de tablas anteriores y configuraci贸n para SQL:
 
 -- 0.1.- Eliminar las relaciones que tuviera la bd
 /abolish
 -- 0.2.- Para procesar solo instrucciones SQL
 /sql
--- 0.3.- Para permitir la inserci髇 multilinea de instrucciones
+-- 0.3.- Para permitir la inserci贸n multilinea de instrucciones
 /multiline on	
 
 
@@ -25,8 +25,8 @@ create table programadores
 (
 	dni       varchar(9), 
 	nombre    varchar(30) not null, 
-	direcci髇 varchar(50), 
-	tel閒ono  varchar(10), 
+	direcci贸n varchar(50), 
+	tel茅fono  varchar(10), 
 	primary key (dni)
 );
 
@@ -34,31 +34,31 @@ create table analistas
 (
 	dni       varchar(9), 
 	nombre    varchar(30) not null, 
-	direcci髇 varchar(50), 
-	tel閒ono  varchar(10), 
+	direcci贸n varchar(50), 
+	tel茅fono  varchar(10), 
 	primary key (dni)
 );
 
 create table proyectos
 (
-	c骴igo      varchar(9), 
-	descripci髇 varchar(20), 
+	c贸digo      varchar(9), 
+	descripci贸n varchar(20), 
 	dnidir      varchar(9), 
-	primary key (c骴igo)
+	primary key (c贸digo)
 );
 
-create table distribuci髇
+create table distribuci贸n
 (
-	c骴igopr varchar(9), 
+	c贸digopr varchar(9), 
 	dniemp varchar(9), 
 	horas int default 0 check(horas>0), 
-    primary key (c骴igopr, dniemp), 
-    foreign key (c骴igopr) references proyectos(c骴igo)
+    primary key (c贸digopr, dniemp), 
+    foreign key (c贸digopr) references proyectos(c贸digo)
 );
 
 -- 2.- Introducimos los datos en nuestra base.
 insert into  programadores values
-	('1','Jacinto' ,'Jazm韓 4' ,'91-8888888'),
+	('1','Jacinto' ,'Jazm铆n 4' ,'91-8888888'),
 	('2','Herminia','Rosa 4'   ,'91-7777777'),
 	('3','Calixto' ,'Clavel 3' ,'91-1231231'),
 	('4','Teodora' ,'Petunia 3','91-6666666');
@@ -66,17 +66,17 @@ insert into  programadores values
 insert into  analistas values
 	('4','Teodora' ,'Petunia 3','91-6666666'),
 	('5','Evaristo','Luna 1'   ,'91-1111111'),
-	('6','Luciana' ,'J鷓iter 2','91-8888888'),
-	('7','Nicodemo','Plut髇 3' , NULL);
+	('6','Luciana' ,'J煤piter 2','91-8888888'),
+	('7','Nicodemo','Plut贸n 3' , NULL);
 
 insert into proyectos values
-	('P1','N髆ina'      ,'4'),
+	('P1','N贸mina'      ,'4'),
 	('P2','Contabilidad','4'),
-	('P3','Producci髇'  ,'5'),
+	('P3','Producci贸n'  ,'5'),
 	('P4','Clientes'    ,'5'),
 	('P5','Ventas'      ,'6');
 
-insert into distribuci髇 values
+insert into distribuci贸n values
 	('P1','1',10),
 	('P1','2',40),
 	('P1','4',5 ),
@@ -90,43 +90,43 @@ insert into distribuci髇 values
 
 -- 3.- Realizamos las consultas
 create view empleados as (select * from programadores) union (select * from analistas);
-create view proyectosEvaristo as (select c骴igopr from distribuci髇 where dniemp='5');
+create view proyectosEvaristo as (select c贸digopr from distribuci贸n where dniemp='5');
 
 -- 3.1.- Dni de todos los empleados, no usamos distinct por ser clave primaria:
 create view vista1 as select dni from empleados;
 
--- 3.2.- Dni de los programadores que tambi閚 son analistas:
+-- 3.2.- Dni de los programadores que tambi茅n son analistas:
 create view vista2 as (select dni from programadores) intersect (select dni from analistas);
 
 -- 3.3.- Dni de los empleados sin trabajo; no son directores ni asignados a proyectos:
 create view vista3 as ((select *      from vista1)        except -- Todos los dnis
-	                   (select dniemp from distribuci髇)) except -- Menos empleados asignados
+	                   (select dniemp from distribuci贸n)) except -- Menos empleados asignados
                        (select dnidir from proyectos);			 -- Menos directores
 
--- 3.4.- C骴igo de los proyectos sin analistas asignados:
+-- 3.4.- C贸digo de los proyectos sin analistas asignados:
 create view vista4 as
 
-(select c骴igo   from proyectos) except 
-(select c骴igopr from analistas inner join distribuci髇 on dni=dniemp);
+(select c贸digo   from proyectos) except 
+(select c贸digopr from analistas inner join distribuci贸n on dni=dniemp);
 
 -- 3.5.- Dni de los analistas que dirijan proyectos pero que no sean programadores:
 create view vista5 as ((select dni from analistas) except    -- Dni de analistas
 					   (select *   from vista2))   intersect -- Menos los que son programadores
-                       (select dnidir from proyectos);		 -- Que adem醩 son directores
+                       (select dnidir from proyectos);		 -- Que adem谩s son directores
 
--- 3.6.- Descripci髇 de proyectos con nombres de programadores y horas asignadas a ellos
+-- 3.6.- Descripci贸n de proyectos con nombres de programadores y horas asignadas a ellos
 create view vista6 as
 
-select descripci髇,nombre,horas
-from proyectos,programadores,distribuci髇
-where c骴igo=c骴igopr and dniemp=dni;
+select descripci贸n,nombre,horas
+from proyectos,programadores,distribuci贸n
+where c贸digo=c贸digopr and dniemp=dni;
 
--- 3.7.- Tel閒onos compartidos por empleados:
+-- 3.7.- Tel茅fonos compartidos por empleados:
 create view vista7 as
 
-select e1.tel閒ono 
+select e1.tel茅fono 
 from empleados e1, empleados e2
-where e1.dni<>e2.dni and e1.tel閒ono=e2.tel閒ono;
+where e1.dni<>e2.dni and e1.tel茅fono=e2.tel茅fono;
 
 -- 3.8.- Utilizando natural join, dni de empleados que son analistas y programadores:
 create view vista8 as select * 
@@ -135,28 +135,28 @@ from (select dni from analistas) natural join (select dni from programadores);
 -- Cuidadito con esta porque creo que no funciona como aparenta
 create view vista8b as select dni from analistas natural join programadores using dni;
 
--- 3.9.- N鷐ero totales de horas que trabaja cada empleado:
+-- 3.9.- N煤mero totales de horas que trabaja cada empleado:
 create view vista9 as
 
 select dni, sum(horas) as sumaHoras		
-from empleados,distribuci髇
+from empleados,distribuci贸n
 where dni=dniemp
 group by dni;
 
---Para mostrar tambi閚 los trabajadores no asignados como 0 horas:
+--Para mostrar tambi茅n los trabajadores no asignados como 0 horas:
 --union 		
 --
 --select dni,0				
---from (select * from vista1) except (select dniemp from distribuci髇);
+--from (select * from vista1) except (select dniemp from distribuci贸n);
 
--- 3.10.- Dni de todos los empleados, nombre y c骴igo de proyecto asignado:
+-- 3.10.- Dni de todos los empleados, nombre y c贸digo de proyecto asignado:
 create view vista10 as
 
-select dni,nombre,c骴igopr
-from empleados left outer join distribuci髇 on dni=dniemp;
+select dni,nombre,c贸digopr
+from empleados left outer join distribuci贸n on dni=dniemp;
 
--- 3.11.- Dni y nombre de los que no tenemos un n鷐ero de tel閒ono registrado:
-create view vista11 as select dni,nombre from empleados where tel閒ono is null;
+-- 3.11.- Dni y nombre de los que no tenemos un n煤mero de tel茅fono registrado:
+create view vista11 as select dni,nombre from empleados where tel茅fono is null;
 
 -- 3.12.- Determinar el dni de los empleados que verifican:
 --
@@ -167,14 +167,14 @@ create view vista11 as select dni,nombre from empleados where tel閒ono is null;
 create view segundoTermino(media) as
 
 (select avg(cociente) from (
-	select c骴igopr, (sum(horas)/count(dniemp)) as cociente
-	from distribuci髇
-	group by c骴igopr));
+	select c贸digopr, (sum(horas)/count(dniemp)) as cociente
+	from distribuci贸n
+	group by c贸digopr));
 
 create view empleadosNumProyectos(dniemp,numProyectos) as
 
 (select dniemp,count(*) as numProyectos
-from distribuci髇
+from distribuci贸n
 group by dniemp);
 
 create view vista12 as
@@ -182,45 +182,45 @@ select dni
 from vista9,empleadosNumProyectos,segundoTermino
 where dni=dniemp and (sumaHoras/numProyectos < media);
 
--- 3.13.- Dni de empleados que trabajen en todos los proyectos que trabaja Evaristo (con divisi髇):
+-- 3.13.- Dni de empleados que trabajen en todos los proyectos que trabaja Evaristo (con divisi贸n):
 
--- 3.14.- Dni de empleados que trabajen en todos los proyectos que trabaja Evaristo (sin divisi髇):
+-- 3.14.- Dni de empleados que trabajen en todos los proyectos que trabaja Evaristo (sin divisi贸n):
 create view empleadosNoTrabajanSiempreEvaristo as
 
 select dni
-from ((select dni,c骴igopr from vista1 inner join proyectosEvaristo)
+from ((select dni,c贸digopr from vista1 inner join proyectosEvaristo)
 	   except
-	  (select dniemp,c骴igopr from distribuci髇));
+	  (select dniemp,c贸digopr from distribuci贸n));
 
 create view vista14 as
 
 (select * from vista1) except (select * from empleadosNoTrabajanSiempreEvaristo);
 
--- 3.15.- Para cada proyecto y empleado (que no trabaje con Evaristo) mostrar n鷐ero de horas ampliado un 20%:
+-- 3.15.- Para cada proyecto y empleado (que no trabaje con Evaristo) mostrar n煤mero de horas ampliado un 20%:
 create view vista15 as
 
-select c骴igopr,dniemp,1.2*horas 
-from distribuci髇 
+select c贸digopr,dniemp,1.2*horas 
+from distribuci贸n 
 where dniemp not in 
 	(select dniemp 
-     from distribuci髇 
-     where c骴igopr in (select * from proyectosEvaristo));
+     from distribuci贸n 
+     where c贸digopr in (select * from proyectosEvaristo));
 
 
--- 3.16.- Empleados que dependen de evaristo (son dirigidos por 閘 o algui閚 que depende de Evaristo):
+-- 3.16.- Empleados que dependen de evaristo (son dirigidos por 茅l o algui茅n que depende de Evaristo):
 create view vista16 as
 
-with proyectosDependenEvaristo(c骴igo) as
+with proyectosDependenEvaristo(c贸digo) as
 (
-(select c骴igo from proyectos where dnidir='5')
+(select c贸digo from proyectos where dnidir='5')
 union 
-(select c骴igo from proyectos where dnidir in 							-- El dni del director
- 					(select dniemp from distribuci髇 where c骴igopr in 	-- Es el dni de un empleado
+(select c贸digo from proyectos where dnidir in 							-- El dni del director
+ 					(select dniemp from distribuci贸n where c贸digopr in 	-- Es el dni de un empleado
                     (select * from proyectosDependenEvaristo)))		-- De un proyecto que depende de Evaristo
 )		
 
-select nombre from empleados,distribuci髇 
-where dni=dniemp and dniemp<>'5' and c骴igopr in (select * from proyectosDependenEvaristo);
+select nombre from empleados,distribuci贸n 
+where dni=dniemp and dniemp<>'5' and c贸digopr in (select * from proyectosDependenEvaristo);
 
 -- 4.- Mostramos las vistas:
 select * from vista1;
