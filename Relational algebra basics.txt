@@ -1,0 +1,124 @@
+--  Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es
+--  
+--  Double degree in Mathematics-Computer engineering
+--  Complutense University, Madrid, Spain.
+
+
+0.- RELATIONAL MODEL:
+
+This model uses tables or relations to represent information. It's widely used
+and the basis for the relational databases.
+
+A relation is composed of tuples or rows wich represent a particular entity of
+this relation. The field or columns in this relation are called atributes and 
+they are a field that represent a property of the object. Each atribute also 
+have a domain in wich it can takes it's values.
+
+Reminder:
+A relation R is a subset from the cartesian product of some sets. In our case:
+A table T is a subset from Domain(atribute1)x ..... x Domain(atributeN).
+
+Initially we don't let our table to be a multiset, we want to be able to distin-
+guish one tuple from another. So we need a subset of atributes that let us to
+distinguish among tuples. These subset of atributes are the superkeys. 
+The superkey we chose to determine wich tuples are different is our primary key.
+
+1.- QUERY LANGUAGES:
+
+It's the way we can apply for information to our database.  We are know going to
+study formal languajes for the relational model. In this, the commands represent
+operations defined in relational algebra to operate on relations.
+
+This is not commonly used, however it's quite useful for formal expressions and
+rigorous demonstrations of correction. We'll see examples of expressions to 
+operate on tables and relations using a sintax developed at the Complutense Uni-
+versity to represent certain operations from the relational algebra. The system
+we use for this examples can be downloaded at http://des.sourceforge.net/ .
+
+
+1.1.- RELATIONAL ALGEBRA EXPRESSIONS:
+
+All this section long we'll consider given a relation R of tuples without any 
+particular restriction. When 'condition' appears between single commas it means
+that there should be placed a boolean condition without parenthesis. Without 
+loss of generality everytime 'R' appears we can place other relation identifier.
+
+All the operations we'll see returns a new relation, if we want to identify that
+relation we can assign an identifier to this operation this way; R1 := ...
+
+1.1.0.- Conditions in DES system:
+Comparators: =,<,>,<=,>=,<> (means distinct)
+Connectors:  and, or
+
+1.1.1.- Selection:
+This operation lets us to select the tuples that verifies some condition. 
+
+DES> SELECT 'condition' (R)
+
+1.1.2.- Projection:
+This operation lets us to select a subset of attributes form the relation. This 
+operation don't repeat tuples (The result is another relation).
+
+DES> PROJECT atribNamei, ... ,atribNamej (R)
+
+1.1.3.- Rename:
+This allows us to rename, change identifier chosen for some attributes to avoid
+ambiguities and operate rigorously.
+
+DES> RENAME R1(attribNewName1, ... , attribNewNameK) (R)
+
+1.1.4.- Set operations:
+This lets us operate with relations with the same domains for all the attributes
+as sets of tuples, so we can do de union, intersection and difference.
+
+WARNING! Attributes' domains must be exactly the same to operate.
+
+DES> R1 UNION      R2
+DES> R1 INTERSECT  R2
+DES> R1 DIFFERENCE R2
+
+1.1.5.- Cartesian product:
+Another really important operation that lets us to combine two or more relations.
+This operation is the common cartesian product among sets considering the rela-
+tions involved as set of tuples. Gets all possible combinations of tuples from
+the combination of the relations involved. High computation cost!
+
+R1(attribute11, ... , attribute1n) {(x11, ... ,x1n), ... , (xi1, ... ,xin)}
+R2(attribute21, ... , attribute2m) {(y11, ... ,y1m), ... , (yj1, ... ,yjm)}
+
+R1 PRODUCT R2 (attribute11, ... , attribute1n, attribute12, ... , attribute2m)
+{(x11, ...,x1n,y11, ... ,y1m) , ... , (xi1, ... ,xin, yj1, ... ,yjm)}
+
+DES> R1 PRODUCT R2
+
+1.1.6.- Join:
+Selection composed with cartesian product. It takes from the cartesian product 
+the tuples verifying some condition.
+
+DES> R1 ZJOIN 'condition' R2
+
+1.1.7.- Natural join:
+Join where the selection condition is that the attributes with the same name has
+the same value. This operation also delete duplicated atributes.
+
+DES> R1 NJOIN R2
+
+1.1.8.- Division:
+Why is this operation called like this? If you can answer this question then you
+understand the operation. For this operation attributes from R2 have to be a
+subset of attributes from R1. 
+
+The division of R1 between R2 is the projection of the attributes from R1 not in
+R2 of those tuples that verifyes that tuplei x R2 is included in R1.
+
+tuple t belongs to R1/R2 iff (t cartesian product R2) is included in R1. 
+
+DES> R1 DIVISION R2
+
+
+
+
+
+
+
+ 
