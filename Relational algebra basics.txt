@@ -1,7 +1,13 @@
+--  Copyright © 2018
+--
 --  Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es
 --  
 --  Double degree in Mathematics-Computer engineering
 --  Complutense University, Madrid, Spain.
+--
+--  Description: 
+--  Basic relational algebra operations and commands for DES. 
+--  (Datalog Educational System - http://des.sourceforge.net/) 
 
 
 0.- RELATIONAL MODEL:
@@ -35,6 +41,8 @@ operate on tables and relations using a sintax developed at the Complutense Uni-
 versity to represent certain operations from the relational algebra. The system
 we use for this examples can be downloaded at http://des.sourceforge.net/ .
 
+From now, I strongly recommend to write an example of each instruction to fully 
+understand it.
 
 1.1.- RELATIONAL ALGEBRA EXPRESSIONS:
 
@@ -50,10 +58,23 @@ relation we can assign an identifier to this operation this way; R1 := ...
 Comparators: =,<,>,<=,>=,<> (means distinct)
 Connectors:  and, or
 
+1.1.0.- About null values:
+We let to introduce tuples in our relation with partial information from the 
+entity they represent. The values unknown will be placed as NULL values. These
+have some peculiarities.
+
+Every comparison involving a null value will return 'unknown'.
+Null and false = false, null or true = true, else conjunction is 'unknown'.
+To determine wether an attribute is null or not we use the sentence IS NULL.
+
+The treatment a null value receive is more or less intuitive in the following
+operations but will always be a singularity from the other possible values. Just
+do examples to test every posibility involving null values and operations.
+
 1.1.1.- Selection:
 This operation lets us to select the tuples that verifies some condition. 
 
-DES> SELECT 'condition' (R)
+DES> SELECT 'conditicomparisionon' (R)
 
 1.1.2.- Projection:
 This operation lets us to select a subset of attributes form the relation. This 
@@ -116,9 +137,70 @@ tuple t belongs to R1/R2 iff (t cartesian product R2) is included in R1.
 DES> R1 DIVISION R2
 
 
+1.2.- EXTENDED RELATIONAL ALGEBRA:
+
+Relational algebra is the perfect way to formalize our requirements and the 
+correction of our requests but it's not fully functional or, at least, not 
+comfortable or easy to use many times. We then let the query languages to incor-
+porate extended relational algebra.
+
+1.2.1.- Generalized projections:
+Allows arithmetic functions in the projection lists. 
+
+DES> PROJECT 'arith_functions'(attributes) (R)
+
+1.2.2.- Multisets, Bags:
+To allow this in the system first we should execute the command '/duplicates on'.
+We'll now get duplicates in our operations. Not commonly used.
+
+1.2.3.- Agregate functions:
+Takes a collection of values and returns a single value as result. We can use 
+this as agregate functions: avg, min, max, sum, count.
+
+DES> GROUP BY 'attributes' AGREGATE_FUNCTION('attribute') 'condition' (R)
+
+1.2.4.- Outer join:
+Gets the combination of tables using cartesian product but without loss of 
+information. This may generates many null values.
+
+DES> R1 LJOIN 'condition' R2 -- Left  join, all tuples in  left relation appear
+DES> R1 RJOIN 'condition' R2 -- Right join, all tuples in right relation appear
+DES> R1 FJOIN 'condition' R2 -- Full  join, all tuples in both relations appear
+
+
+1.3.- RECURSION:
+
+This is one of those things that thinking with a high abstraction let us to 
+understan easier. We just have to define an recursive relation.
+
+Dual table: 
+Everything in the relational moder must be a relation. What can we do if we just
+want the result of a query? What can we do to operate with a simple result of an
+arithmetic operation? We ask the dual table for the result, it gives us a one
+row and one column relation (~ one value) with our result. It's useful for the
+base cases for recursive relations.
+
+Examples:
+naturals(n)    := project 1 (dual) union project n+1 (naturals);
+natTill100(n)  := project 1 (dual) union project n+1 (select n<100 (natTill100));
+
+Suppose this situation, you have a relation with employee-boss and you want to 
+know the employess that depends on one boss (those whose boss is 'M' or they work
+for someone whose boss is 'M'). This is called transitive closure of the relation.
+This could also create infinite recursion if the language don't support this kind
+of recursion. 
+
+2.- DATA DEFINITION LANGUAGE AND DATA MANIPULATION LANGUAGE:
+
+RA (relational algebra) language used at DES (Datalog Educational System) doesn't
+support DML even though the insertion, deletion and modification operations can
+be defined with relational algebra operations. RA used at DES is only for queries
+using exact operations from the relational algebra.
 
 
 
 
+-- Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es ~ fcojavibm1@gmail.com
+--
+-- Needs review and more examples. (2018/10/25)
 
- 
