@@ -68,12 +68,27 @@ ORA-02291: restricción de integridad (DG04.SYS_C0011895) violada - clave princi
 
 -- 5.- Borrado en una tabla padre con alguna hija con foreign key sin ON DELETE CASCADE:
 delete from "Códigos postales" where provincia='Madrid';
+/*
+delete from "Códigos postales" where provincia='Madrid'
+Informe de error -
+ORA-02292: restricción de integridad (CC04.SYS_C0013029) violada - registro secundario encontrado
+*/
 
 -- 6.- Borrado en una tabla padre con alguna hija con foreign key con ON DELETE CASCADE:
 -- Borramos a Carlota Cerezo, se borran sus dos teléfonos guardados ('611111111','931111111')
 delete from Empleados where DNI='12345678C';   
+/*
+1 fila eliminado
+Se han eliminado los dos teléfonos que tenía asignados Carlota
+*/
 
 -- 7.- Borrado en Empleados cuando Teléfonos tiene una regla de borrado ON DELETE SET NULL sobre el campo DNI.
+delete from Empleados where DNI='12345678C'; 
+/*
+delete from Empleados where DNI='12345678C'
+Informe de error -
+ORA-01407: no se puede actualizar ("CC04"."TELÉFONOS"."DNI") a un valor NULL
+*/
 -- On delete set null para el dni en la tabla teléfonos. Pero dni es un campo de la clave primaria, no nos
 -- va a dejar que sea null, tenemos que poner el error que se da al ejecutar el fichero crear tablas con on
 -- delete set null sobre el campo dni como foreign key en la tabla teléfonos?

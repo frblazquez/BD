@@ -8,7 +8,6 @@
 --DROP TABLE Empleados;
 --DROP TABLE Domicilios;
 --DROP TABLE Teléfonos;
---DROP TABLE Domicilios;
 --DROP TABLE "Códigos postales";
 
 Create table Empleados

@@ -3,7 +3,7 @@
 -- Double degree in Mathematics-Computer engineering.
 -- Complutense university, Madrid.
 --
--- Description: SQL instruction and basic content.
+-- Description: SQL instructions and basic content.
 
 1.- DATA DEFINITION LANGUAGE:
 
@@ -72,7 +72,7 @@ DELETE FROM table_name WHERE conditions;
 ---- We can update all the tuples or just those verifying a condition.
 UPDATE table_name SET atributei = expresioni, ... , atributej = expresionj;
 UPDATE table_name SET atributes = expresions WHERE conditions;
-
+    
 -- To insert new elements into "table_name(atribute1_name, ... , atributen_name)":
 ---- We can insert specifying the atributes order or avoid specifying these if we follow
 ---- the table schema. We can also insert multiple values using '()' and commas. 
@@ -321,4 +321,7 @@ request(involving localViews);
 
 
 6.- SQL RECURSIVE:
--- Examples for this time, it's complicated to see a general schema.
+
+
+
+
