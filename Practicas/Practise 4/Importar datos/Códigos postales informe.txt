@@ -1,11 +1,10 @@
-
 SQL*Loader: Release 11.2.0.1.0 - Production on Lun Oct 29 18:14:16 2018
 
 Copyright (c) 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
 
-Archivo de Control:   Códigos postales.ctl
-Archivo de Datos:      Códigos postales.txt
-  Archivo de Errores:     Códigos postales.bad
+Archivo de Control:     Códigos postales.ctl
+Archivo de Datos:       Códigos postales.txt
+Archivo de Errores:     Códigos postales.bad
   Desechar Archivo:  ninguno especificado
  
  (Permitir todos los registros desechados)
@@ -41,12 +40,13 @@ Espacio asignado a matriz de enlace:            49536 bytes (64 filas)
 Bytes de buffer de lectura: 1048576
 
 Total de registros lógicos ignorados:          0
-Total de registros lógicos leídos:           7
+Total de registros lógicos leídos:             7
 Total de registros lógicos rechazados:         1
-Total de registros lógicos desechados:        0
+Total de registros lógicos desechados:         0
 
 La ejecución empezó en Lun Oct 29 18:14:16 2018
 La ejecución terminó en Lun Oct 29 18:14:17 2018
 
 Tiempo transcurrido:     00:00:00.09
-Tiempo de CPU:         00:00:00.02
+Tiempo de CPU:           00:00:00.02
+

@@ -3,6 +3,10 @@
 --
 --   Doble grado Ingeniería informática - Matemáticas
 --	 Universidad Complutense de Madrid.
+--
+-- Comentarios:
+-- Tras cada inserción y en un comentario de la forma /**/ se ha introducido
+-- el error lanzado en consola. 
 
 -- Para borrar los datos que hayamos insertado antes:
 -- DELETE FROM Empleados;
@@ -34,40 +38,50 @@ insert into Domicilios(DNI,Calle,"Código postal") values ('12345678P', 'Diamant
 insert into Domicilios(DNI,Calle,"Código postal") values ('12345678P', 'Carbón', '14900');
 insert into Domicilios(DNI,Calle,"Código postal") values ('12345678L', 'Diamante', '14200');
 
--- 1.- Inserción de una tupla con una clave primaria duplicada:
+--> 1.- Inserción de una tupla con una clave primaria duplicada:
 insert into Empleados values ('David Petrenko', '12345678A', 3000);
+
+-- El DNI de David Petrenko ya aparece como DNI de Antonio Arjona.
 /*
 insert into Empleados values ('David Petrenko', '12345678A', 3000)
 Informe de error -
 ORA-00001: restricción única (DG04.SYS_C0011891) violada
 */
 
--- 2.- Inserción que no incluya todas las columnas que requieren un valor:
+--> 2.- Inserción que no incluya todas las columnas que requieren un valor:
 insert into Empleados(DNI, Sueldo) values ('12345688Q', 4000);
+
+-- El campo nombre no puede ser nulo.
 /*
 insert into Empleados(DNI, Sueldo) values ('12345688Q', 4000)
 Informe de error -
 ORA-01400: no se puede realizar una inserción NULL en ("DG04"."EMPLEADOS"."NOMBRE")
 */
 
--- 3.- Inserción que no verifique las restricciones de dominio check():
+--> 3.- Inserción que no verifique las restricciones de dominio check():
 insert into Empleados values ('David Petrenko', '12345678A', 2);
+
+-- El salario mínimo es 735€, muy por encima de 2€.
 /*
 insert into Empleados values ('David Petrenko', '12345678A', 2)
 Informe de error -
 ORA-02290: restricción de control (DG04.SYS_C0011890) violada
 */
 
--- 4.- Inserción que no respete una regla de integridad referencial:
+--> 4.- Inserción que no respete una regla de integridad referencial:
 insert into Domicilios values ('47399025G', 'General Cadenas Campos', '28039');
+
+-- El código postal '28039' no aparece en la tabla Códigos postales.
 /*
 insert into Domicilios values ('47399025G', 'General Cadenas Campos', '28039')
 Informe de error -
 ORA-02291: restricción de integridad (DG04.SYS_C0011895) violada - clave principal no encontrada
 */
 
--- 5.- Borrado en una tabla padre con alguna hija con foreign key sin ON DELETE CASCADE:
+--> 5.- Borrado en una tabla padre con alguna hija con foreign key sin ON DELETE CASCADE:
 delete from "Códigos postales" where provincia='Madrid';
+
+-- No podemos borrar los códigos postales de Madrid, hay domicilios que los referencian.
 /*
 delete from "Códigos postales" where provincia='Madrid'
 Informe de error -
@@ -75,30 +89,34 @@ ORA-02292: restricción de integridad (CC04.SYS_C0013029) violada - registro sec
 */
 
 -- 6.- Borrado en una tabla padre con alguna hija con foreign key con ON DELETE CASCADE:
--- Borramos a Carlota Cerezo, se borran sus dos teléfonos guardados ('611111111','931111111')
-delete from Empleados where DNI='12345678C';   
+delete from Empleados where DNI='12345678C';
+
+-- Borramos a Carlota Cerezo, que tenía dos teléfonos ('611111111','931111111').
+-- En consola no se muestra pero, borrar a Carlota elimina una tupla de la tabla
+-- de empleados y dos tuplas de la tabla teléfonos.
 /*
 1 fila eliminado
-Se han eliminado los dos teléfonos que tenía asignados Carlota
 */
 
 -- 7.- Borrado en Empleados cuando Teléfonos tiene una regla de borrado ON DELETE SET NULL sobre el campo DNI.
 delete from Empleados where DNI='12345678C'; 
+
+-- Al borrar un empleado con al menos un teléfono registrado a su nombre, se trata de
+-- marcar como nulo el campo DNI de la tabla teléfonos pero se obtiene un error porque
+-- este campo es clave primaria y referencia a otra clave primaria.
 /*
 delete from Empleados where DNI='12345678C'
 Informe de error -
 ORA-01407: no se puede actualizar ("CC04"."TELÉFONOS"."DNI") a un valor NULL
 */
--- On delete set null para el dni en la tabla teléfonos. Pero dni es un campo de la clave primaria, no nos
--- va a dejar que sea null, tenemos que poner el error que se da al ejecutar el fichero crear tablas con on
--- delete set null sobre el campo dni como foreign key en la tabla teléfonos?
 
-/*
-Create table Teléfonos
-(
-    DNI Char(9), 
-    Teléfono Char(9),
-    primary key (DNI, Teléfono),
-    foreign key (DNI) references Empleados(DNI) on delete set null
-);
-*/
+-- Tabla Teléfonos para el apartado 7:
+-- 
+-- Create table Teléfonos
+-- (
+--    DNI Char(9), 
+--    Teléfono Char(9),
+--    primary key (DNI, Teléfono),
+--    foreign key (DNI) references Empleados(DNI) on delete set null
+-- );
+

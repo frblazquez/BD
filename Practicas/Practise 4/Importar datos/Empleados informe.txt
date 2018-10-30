@@ -1,11 +1,10 @@
-
 SQL*Loader: Release 11.2.0.1.0 - Production on Lun Oct 29 18:10:30 2018
 
 Copyright (c) 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
 
-Archivo de Control:   Empleados.ctl
-Archivo de Datos:      Empleados.txt
-  Archivo de Errores:     Empleados.bad
+Archivo de Control:     Empleados.ctl
+Archivo de Datos:       Empleados.txt
+Archivo de Errores:     Empleados.bad
   Desechar Archivo:  ninguno especificado
  
  (Permitir todos los registros desechados)
@@ -38,12 +37,13 @@ Espacio asignado a matriz de enlace:            49536 bytes (64 filas)
 Bytes de buffer de lectura: 1048576
 
 Total de registros lógicos ignorados:          0
-Total de registros lógicos leídos:           4
+Total de registros lógicos leídos:             4
 Total de registros lógicos rechazados:         0
-Total de registros lógicos desechados:        0
+Total de registros lógicos desechados:         0
 
 La ejecución empezó en Lun Oct 29 18:10:30 2018
 La ejecución terminó en Lun Oct 29 18:10:30 2018
 
 Tiempo transcurrido:     00:00:00.11
-Tiempo de CPU:         00:00:00.05
+Tiempo de CPU:           00:00:00.05
+
