@@ -8,11 +8,11 @@
 
 0.- WHAT IS PL/SQL:
 
-SQL is an query language, done for asking for information to an DBMS (DataBase 
-manager system). It's really useful for this but it isn't powerful enough for
-advanced queries and databases maintenance (among others). So we sometimes need
-the tools we have in an structured programming language. This is exactly what
-PL/SQL is. It is the way we can include SQL in C++ or Java languajes. 
+    SQL is an query language, done for asking for information to an DBMS (DataBase 
+    manager system). It's really useful for this but it isn't powerful enough for
+    advanced queries and databases maintenance (among others). So we sometimes need
+    the tools we have in an structured programming language. This is exactly what
+    PL/SQL is. It is the way we can include SQL in C++ or Java languajes. 
 
 Now we know what PL/SQL is we are going to start learning PL/SQL sintax and 
 common tools.
@@ -134,6 +134,123 @@ common tools.
     -- DECLARE statement.
 
 1.7.- Cursors:
+-- What can we do if an query returns more than one tuple? We create an cursor
+-- and then we can move throught the tuples returned.
+-- A cursor has an pointer pointing to the tuples returned. We can make the pointer
+-- advance.
 
+    DECLARE
+        ...
+        CURSOR cursorName IS selectSentence;
+        ...
+    BEGIN   
+        ...
+        OPEN cursorName;
+        ...
+        FETCH cursorName INTO var1, ... ,varN;
+        ...
+        CLOSE cursorName;
+        ...
     
+    END;
     
+ -> When we open the cursor, the select sentence is executed and the pointer
+    is placed at the first tuple returned.
+ -> The cursor stored the tuple data in the variables (the types must be exactly
+    the same than the table attributes) and the pointer moves to the next tuple.
+ -> When the cursor is closed the occupied memory is released. We can reopen the
+    cursor later.
+    
+    How to know the cursor state? Cursor attributes!
+ -> %NOTFOUND   - Returns true if last fetch did not return a tuple.
+ -> %FOUND      - Returns true if last fetch returned a tuple.
+ -> %ROWCOUNT   - Returns the tuples traveled.
+ -> %ISOPEN     - Returns true if the cursor is opened.
+        
+    Sometimes we want a cursor to depend on some parameters, this is, we want to
+    calculate the select sentence wich result our cursor will point depending on
+    some values. We can create cursors depending on parameters this way:
+    
+    CURSOR cursorName(param1 type1, ... , paramN typeN) IS selectSentence(params);
+    
+    To open this cursor we give it the params between parenthesis.
+    
+    OPEN cursorName(param1Value, ... ,paramNValue);
+    
+1.8.- Records:
+-- This is nothing else but a struct or a TAD we can define. Some variables grouped
+-- with an easy common access. This should be done on a DECLARE clause. 
+
+    TYPE recordName IS RECORD
+    (
+        field1Name type1,
+        field2Name type2,
+        ...
+        fieldNName typeN
+    );
+    
+ -> We can define a record with the structure of a tuple with %ROWTYPE. Example:
+    record1Name table1%ROWTYPE;
+
+1.9.- Exceptions:
+-- We can create our own exceptions, throw them, treat them and react against 
+-- errors Oracle throws during an program execution.
+
+    DECLARE
+        ...
+    BEGIN   
+        ...
+    EXCEPTION
+        WHEN exception1 [or exception2 or ... ] THEN
+            --statements
+        WHEN exceptionI THEN
+            --statements
+        ...
+        ...
+        WHEN OTHERS THEN
+            --statements
+    END;
+    
+    We can also declare our exceptions inside the DECLARE clause and throw them
+    when we tetect some kind of error. The type they should have is EXCEPTION.
+    We throw this exceptions with a RAISE statement.
+    
+    DECLARE
+        ...
+        excptName EXCEPTION;
+        ...
+    BEGIN   
+        ...
+        IF excptCondition THEN
+            RAISE excptName;
+        END IF;
+        ...
+
+1.10.- Procedures:
+-- As in imperative programming languajes, these lets us to re-use the code. These
+-- are named blocks wich we can refer.
+
+CREATE [OR REPLACE] PROCEDURE procName[(param1 mode1 type1, ... , paramN modeN typeN)] IS
+    -- declarations
+    BEGIN
+    -- statements
+    EXCEPTION
+    -- Exceptions treatment
+    END;
+    
+ -> Mode is the parameter type, IN, OUT OR IN OUT
+
+1.11.- Functions:
+-- These are nothing but procedures returning one value
+
+CREATE [OR REPLACE] FUNCTION funcName[(param1 mode1 type1, ... , paramN modeN typeN)]
+                    RETURN dataType IS
+    -- declarations
+    BEGIN
+    -- statements
+    -- RETURN instruction
+    EXCEPTION
+    -- Exceptions treatment
+    END;
+    
+ -> Mode is the parameter type, IN, OUT OR IN OUT
