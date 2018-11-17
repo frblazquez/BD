@@ -1,0 +1,2 @@
+sqlldr userid=DG04@BDd/DG04PWD control='Domicilios I.ctl' log='Domicilios I informe.txt'
+sqlldr userid=DG04@BDd/DG04PWD control='Códigos postales I.ctl' log='Códigos postales I informe.txt'
