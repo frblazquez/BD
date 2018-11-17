@@ -1,3 +1,13 @@
+-- FRANCISCO JAVIER BLÁZQUEZ MARTÍNEZ  ~ frblazqu@ucm.es
+-- MANUEL ORTEGA SALVADOR              ~ manuor01@ucm.es
+--
+-- Doble grado Ingeniería informática - Matemáticas
+--	Universidad Complutense de Madrid.
+
+/*
+    This procedure checks wether "Códigos postales I" table has attributes
+    with NULL values or not.
+*/
 CREATE OR REPLACE PROCEDURE comprobar_NULL IS
     
     /* We define a cursor to point the tuples with some value NULL */
@@ -46,3 +56,5 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('Oh,Oh; this is unexpected!');
 END;
+
+
