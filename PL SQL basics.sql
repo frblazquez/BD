@@ -254,3 +254,7 @@ CREATE [OR REPLACE] FUNCTION funcName[(param1 mode1 type1, ... , paramN modeN ty
     END;
     
  -> Mode is the parameter type, IN, OUT OR IN OUT
+ 
+ 
+2.- CONSTRAINTS:
+

@@ -11,17 +11,15 @@
 CREATE OR REPLACE PROCEDURE comprobar_PK IS
     
     /* We define a cursor to point the tuples with some value NULL */
-    CURSOR tuplasConClavePrimRep IS 
+    CURSOR postCode_numApariciones IS 
     
-        SELECT DISTINCT cp1."Código postal"
-        FROM "Códigos postales I" cp1, "Códigos postales I" cp2
-        WHERE (cp1."Código postal" = cp2."Código postal" 
-              AND (cp1.Población != cp2.Población 
-              OR   cp1.Provincia != cp2.Provincia))
-              OR   cp1."Código postal" IS NULL;
+        SELECT "Código postal",count(*)
+        FROM "Códigos postales I"
+        GROUP BY "Código postal";
                
     /* Variables needed for doing FETCH */
     postCode "Códigos postales I"."Código postal"%TYPE;
+    numApariciones integer;
     
     /* Exception to be thrown */
     tuplesWithNull exception;
@@ -29,31 +27,45 @@ CREATE OR REPLACE PROCEDURE comprobar_PK IS
     
 BEGIN
     
-    OPEN tuplasConClavePrimRep;
+    OPEN postCode_numApariciones;
     
-    FETCH tuplasConClavePrimRep INTO  postCode;
+    FETCH postCode_numApariciones INTO  postCode,numApariciones;
     
-    WHILE tuplasConClavePrimRep%FOUND LOOP
+    WHILE postCode_numApariciones%FOUND LOOP
         
         IF postCode IS NULL THEN
             RAISE tuplesWithNull;  
-        ELSE
+        ELSIF numApariciones>1 THEN
             RAISE duplicatedPrimKey;
         END IF;
         
-        FETCH tuplasConClavePrimRep INTO  postCode;
+        FETCH postCode_numApariciones INTO  postCode,numApariciones;
     END LOOP;
     
-    CLOSE tuplasConClavePrimRep;
+    CLOSE postCode_numApariciones;
 
 EXCEPTION
 
     WHEN tuplesWithNull THEN
         DBMS_OUTPUT.put_line('Se ha encontrado una tupla con clave primaria nula');
     WHEN duplicatedPrimKey THEN
-        DBMS_OUTPUT.put_line('Se ha encontrado uba clave primaria repetida');
+        DBMS_OUTPUT.put_line('Se ha encontrado una clave primaria repetida');
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('Oh,Oh; this is unexpected!');
 END;
 
+/*
+EXECUTE COMPROBAR_PK;
+
+Se ha encontrado una tupla con clave primaria nula
+Procedimiento PL/SQL terminado correctamente.
+
+UPDATE "Códigos postales I" SET "Código postal"=14900 WHERE "Código postal" IS NULL;
+1 fila actualizadas.
+
+EXECUTE COMPROBAR_PK;
+
+Se ha encontrado uba clave primaria repetida
+Procedimiento PL/SQL terminado correctamente.
+*/
 

@@ -14,12 +14,12 @@ CREATE OR REPLACE PROCEDURE comprobar_FK(numErrorsLimit IN integer) IS
     CURSOR  foreignKeyViolations IS 
     
         SELECT "Domicilios I"."Código postal","Domicilios I".DNI
-        FROM   "Domicilios I","Códigos postales I"
+        FROM   "Domicilios I"
         WHERE  "Domicilios I"."Código postal" 
-        NOT IN (select "Código postal" from   "Códigos postales");
+        NOT IN (select "Código postal" from   "Códigos postales I");
                
     /* Variables needed for doing FETCH */
-    postCode "Domicilios I"."Código Postal"%TYPE;
+    postCode "Domicilios I"."Código postal"%TYPE;
     empDni   "Domicilios I".DNI%TYPE;
     
     /* Counter variable */
@@ -56,21 +56,24 @@ EXCEPTION
 END;
 
 /*
-EXECUTE comprobar_PK(1);
-EXECUTE comprobar_FK(2);
+Procedure COMPROBAR_FK compilado
 
-select * from "Códigos postales I";
-select * from "Domicilios I";
+EXECUTE COMPROBAR_FK(5);
+El código postal 14901 (empleado con DNI 12345678P) es una FK_VIOLATION.
+Se han encontrado 1 violaciones de clave foránea.
 
-SHOW ERRORS;
-
-UPDATE "Códigos postales I" 
-SET "Código postal"='14900'
-WHERE "Código postal" IS NULL;
+Procedimiento PL/SQL terminado correctamente.
 
 INSERT INTO "Domicilios I" VALUES
 ('47399024A', 'Petrenko', '33333');
 
 INSERT INTO "Domicilios I" VALUES
 ('47399024B', 'PetrenkoB', '33334');
+
+EXECUTE COMPROBAR_FK(2);
+El código postal 14901 (empleado con DNI 12345678P) es una FK_VIOLATION.
+El código postal 33334 (empleado con DNI 47399024B) es una FK_VIOLATION.
+Se han encontrado 2 violaciones de clave foránea.
+
+Procedimiento PL/SQL terminado correctamente.
 */

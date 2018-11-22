@@ -8,6 +8,7 @@
     This procedure checks wether "Códigos postales I" table has attributes
     with NULL values or not.
 */
+
 CREATE OR REPLACE PROCEDURE comprobar_NULL IS
     
     /* We define a cursor to point the tuples with some value NULL */
@@ -57,4 +58,14 @@ EXCEPTION
         DBMS_OUTPUT.put_line('Oh,Oh; this is unexpected!');
 END;
 
+/*
+SET SERVEROUTPUT ON SIZE 100000;
+
+Procedure COMPROBAR_NULL compilado
+
+Valor nulo en la tupla:  Arganda                                            Sevilla                                           
+Se han encontrado 1 tuplas con algún atributo nulos
+
+Procedimiento PL/SQL terminado correctamente.
+*/
 

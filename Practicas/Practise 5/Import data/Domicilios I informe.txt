@@ -4,9 +4,9 @@ SQL*Loader: Release 11.2.0.1.0 - Production on Vie Nov 16 13:06:05 2018
 Copyright (c) 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
 
 Archivo de Control:   Domicilios I.ctl
-Archivo de Datos:      Domicilios I.txt
-  Archivo de Errores:     Domicilios I.bad
-  Desechar Archivo:  ninguno especificado
+Archivo de Datos:     Domicilios I.txt
+Archivo de Errores:   Domicilios I.bad
+  Desechar Archivo:   ninguno especificado
  
  (Permitir todos los registros desechados)
 
