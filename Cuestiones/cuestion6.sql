@@ -1,140 +1,163 @@
--- Francisco Javier Bl�zquez Mart�nez ~ frblazqu@ucm.es
+-- Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es
 --
--- Double grado Matem�ticas-Ingenier�a inform�tica.
+-- Double grado Matemáticas-Ingeniería informática.
 -- Universidad Complutense de Madrid.
 --
--- Descripci�n:
--- �Somos capaces de representar funciones en SQL?
+-- Descripción:
+-- ¿Somos capaces de representar funciones en SQL?
 
 
 /abolish
 /sql
 /multiline on
+/duplicates on
 
 
 -- Comentarios:
--- Partimos de una funci�n dada en una tabla como puntos del dominio y correspondientes
--- im�genes (habitualmente podr� ser calculada gracias al polinomio de taylor, ver la 
--- cuesti�n 4).
--- La tabla con los datos de nuestra funci�n tendr� un rango de valores del dominio y
--- un rango de valores de la imagen que nos interesa conocer para poder dibujar nuestra
--- funci�n.
+-- 
+-- Representamos la función especificada en FUNCTION de la claúsula with en el intervalo
+-- [MIN_X,MAX_X] con una precisión y deformación relativa del eje x y el eje y variables.
+--
+-- Podemos refinar la precisión del dibujo aumentando estas constantes de ejecución.
+--
+-- He representado la función seno,coseno,exponencial y raíz cuadrada para probar que el
+-- esquema es en efecto general. (todas se muestran entre 0 y 4*pi).
 
--- 1.- Funci�n a representar. (f(x) = sen(x) en nuestro caso):
-create table funcion
-(
-	puntoDominio float,
-	puntoImagen  float,
-  
-  	primary key (puntoDominio) -- Nos garantiza que sea una funci�n!
-);
-
-insert into funcion values
-(0.0,0.0),
-(0.2,0.199),
-(0.4,0.389),
-(0.6,0.565),
-(0.8,0.717),
-(1.0,0.841),
-(1.2,0.932),
-(1.4,0.985),
-(1.6,1.0),
-(1.8,0.974),
-(2.0,0.909),
-(2.2,0.808),
-(2.4,0.675),
-(2.6,0.516),
-(2.8,0.335),
-(3.0,0.141),
-(3.2,-0.058),
-(3.4,-0.256),
-(3.6,-0.443),
-(3.8,-0.612),
-(4.0,-0.757),
-(4.2,-0.872),
-(4.4,-0.952),
-(4.6,-0.994),
-(4.8,-1.000),
-(5.0,-0.959),
-(5.2,-0.883),
-(5.4,-0.773),
-(5.6,-0.631),
-(5.8,-0.465),
-(6.0,-0.279),
-(6.2,-0.083),
-(6.4,0.0),
-(6.8,0.199),
-(7.0,0.389),
-(7.2,0.565),
-(7.4,0.717),
-(7.6,0.841),
-(7.8,0.932),
-(8.0,0.985),
-(8.2,1.0),
-(8.4,0.974),
-(8.6,0.909),
-(8.8,0.808),
-(9.0,0.675),
-(9.2,0.516),
-(9.4,0.335),
-(9.6,0.141),
-(9.8,-0.058),
-(10.0,-0.256),
-(10.2,-0.443),
-(10.4,-0.612),
-(10.6,-0.757),
-(10.8,-0.872),
-(11.0,-0.952),
-(11.2,-0.994),
-(11.4,-1.000),
-(11.6,-0.959),
-(11.8,-0.883),
-(12.0,-0.733),
-(12.2,-0.531),
-(12.4,-0.215),
-(12.6,-0.013);
+-- Procedimiento:
+-- 
+-- 1.- Tomar el origen y final del intervalo del dominio (constantes de la cláusula with 
+--     que puede cambiar el usuario). 
+-- 2.- Dividir este intervalo en tantas divisiones como indique el usuario. 
+-- 3.- Tomar un punto para cada uno de los subintervalos tomados. (el menor en este caso).
+-- 4.- A partir del aptd. anterior, asignar a cada punto del dominio su imagen.
+-- 5.- Tomar el mínimo y máximo de la imagen.
+-- 6.- Dividir el rango de la imagen en los subintervalos indicados por el usuario.
+-- 7.- Asignar a cada subintervalo de la imagen una representación respetando proporciones.
+-- 8.- Tomar para cada punto del dominio, la representación de su punto imagen.
 
 
--- 2.- Rango de la imagen de nuestra funci�n:
+create view FUNCION_SENO as
 
-create view RANGO_IMAGEN(miny,maxy) as 
-
-select min(puntoImagen),max(puntoImagen) from funcion;
-
--- 3.- Numero de divisiones del rango de la imagen y a partir de este longitud de
---     los subintervalos de divisi�n de la imagen:
-
-create view NUM_DIVISIONES(numDiv) as select 30 from dual;
-
-create view STEP_IMG(step) as
-
-select (maxy-miny)/numDiv from RANGO_IMAGEN,NUM_DIVISIONES;
-
--- 4.- Creamos ahora una vista de conversi�n intervalos imagen - string.
---     Esta vista asigna a intervalos de la imagen una representaci�n de string
-
-create view converter as
-
-	with conv(indice, minim, maxim, representation) as
+with
 	
-	((select 0,miny-step,miny,'' from RANGO_IMAGEN,STEP_IMG)
-	 union
-     (select indice+1,minim+step,maxim+step, (representation || ' ')
-      from   conv,RANGO_IMAGEN,STEP_IMG
-      where  minim<maxy))
+	MIN_X(minX)  as (select 0    from dual), 	-- Mínimo valor de x a representar
+	MAX_X(maxX)  as (select 4*pi from dual),	-- Máximo valor de x a representar
+	DIV_X(divX)  as (select 50   from dual),	-- Número de divisiones en el eje x
+	
+	STEP_X(stepX)    as (select (maxX-minX)/divX from MAX_X,MIN_X,DIV_X),
+	POINTS_X(pointX) as ((select minX from MIN_X) union
+                         (select pointX+stepX from POINTS_X,STEP_X,MAX_X where pointX<maxX)),
+	FUNCTION(x,y) as (select pointX, sin(pointX) from POINTS_X),
 
-select * from conv;
+	MIN_Y(minY)   as (select min(y) from FUNCTION),	-- Mínimo valor de y a representar
+	MAX_Y(maxY)   as (select max(y) from FUNCTION),	-- Máximo valor de y a representar
+	DIV_Y(divY)   as (select 30 from dual),			-- Número de divisiones en el eje y
+	STEP_Y(stepY) as (select (maxY-minY)/divY from MAX_Y,MIN_Y,DIV_Y),
+
+	CONVERTER(i, a, b, representation) as
+
+		((select 0,minY-stepY, minY,'' from MIN_Y,STEP_Y) union
+         (select i+1,a+stepY,b+stepY, (representation || ' ')
+          from CONVERTER,STEP_Y,MAX_Y
+          where a<=maxY))
+
+select x,representation 
+from   FUNCTION,CONVERTER
+where  a<=y and y<b;
+
+create view FUNCION_COSENO as
+
+with
+	
+	MIN_X(minX)  as (select 0    from dual), 	-- Mínimo valor de x a representar
+	MAX_X(maxX)  as (select 4*pi from dual),	-- Máximo valor de x a representar
+	DIV_X(divX)  as (select 50   from dual),	-- Número de divisiones en el eje x
+	
+	STEP_X(stepX)    as (select (maxX-minX)/divX from MAX_X,MIN_X,DIV_X),
+	POINTS_X(pointX) as ((select minX from MIN_X) union
+                         (select pointX+stepX from POINTS_X,STEP_X,MAX_X where pointX<maxX)),
+	FUNCTION(x,y) as (select pointX, cos(pointX) from POINTS_X),
+
+	MIN_Y(minY)   as (select min(y) from FUNCTION),	-- Mínimo valor de y a representar
+	MAX_Y(maxY)   as (select max(y) from FUNCTION),	-- Máximo valor de y a representar
+	DIV_Y(divY)   as (select 30 from dual),			-- Número de divisiones en el eje y
+	STEP_Y(stepY) as (select (maxY-minY)/divY from MAX_Y,MIN_Y,DIV_Y),
+
+	CONVERTER(i, a, b, representation) as
+
+		((select 0,minY-stepY, minY,'' from MIN_Y,STEP_Y) union
+         (select i+1,a+stepY,b+stepY, (representation || ' ')
+          from CONVERTER,STEP_Y,MAX_Y
+          where a<=maxY))
+
+select x,representation 
+from   FUNCTION,CONVERTER
+where  a<=y and y<b;
+
+create view FUNCION_EXP as
+
+with
+	
+	MIN_X(minX)  as (select 0    from dual), 	-- Mínimo valor de x a representar
+	MAX_X(maxX)  as (select 4*pi from dual),	-- Máximo valor de x a representar
+	DIV_X(divX)  as (select 50   from dual),	-- Número de divisiones en el eje x
+	
+	STEP_X(stepX)    as (select (maxX-minX)/divX from MAX_X,MIN_X,DIV_X),
+	POINTS_X(pointX) as ((select minX from MIN_X) union
+                         (select pointX+stepX from POINTS_X,STEP_X,MAX_X where pointX<maxX)),
+	FUNCTION(x,y) as (select pointX, exp(pointX) from POINTS_X),
+
+	MIN_Y(minY)   as (select min(y) from FUNCTION),	-- Mínimo valor de y a representar
+	MAX_Y(maxY)   as (select max(y) from FUNCTION),	-- Máximo valor de y a representar
+	DIV_Y(divY)   as (select 30 from dual),			-- Número de divisiones en el eje y
+	STEP_Y(stepY) as (select (maxY-minY)/divY from MAX_Y,MIN_Y,DIV_Y),
+
+	CONVERTER(i, a, b, representation) as
+
+		((select 0,minY-stepY, minY,'' from MIN_Y,STEP_Y) union
+         (select i+1,a+stepY,b+stepY, (representation || ' ')
+          from CONVERTER,STEP_Y,MAX_Y
+          where a<=maxY))
+
+select x,representation 
+from   FUNCTION,CONVERTER
+where  a<=y and y<b;
+
+create view FUNCION_RAIZ as
+
+with
+	
+	MIN_X(minX)  as (select 0    from dual), 	-- Mínimo valor de x a representar
+	MAX_X(maxX)  as (select 4*pi from dual),	-- Máximo valor de x a representar
+	DIV_X(divX)  as (select 50   from dual),	-- Número de divisiones en el eje x
+	
+	STEP_X(stepX)    as (select (maxX-minX)/divX from MAX_X,MIN_X,DIV_X),
+	POINTS_X(pointX) as ((select minX from MIN_X) union
+                         (select pointX+stepX from POINTS_X,STEP_X,MAX_X where pointX<maxX)),
+	FUNCTION(x,y) as (select pointX, sqrt(pointX) from POINTS_X),
+
+	MIN_Y(minY)   as (select min(y) from FUNCTION),	-- Mínimo valor de y a representar
+	MAX_Y(maxY)   as (select max(y) from FUNCTION),	-- Máximo valor de y a representar
+	DIV_Y(divY)   as (select 30 from dual),			-- Número de divisiones en el eje y
+	STEP_Y(stepY) as (select (maxY-minY)/divY from MAX_Y,MIN_Y,DIV_Y),
+
+	CONVERTER(i, a, b, representation) as
+
+		((select 0,minY, minY+stepY,'' from MIN_Y,STEP_Y) union
+         (select i+1,a+stepY,b+stepY, (representation || ' ')
+          from CONVERTER,STEP_Y,MAX_Y
+          where a<maxY))
+
+select x,representation 
+from   FUNCTION,CONVERTER
+where  a<=y and y<b;
 
 
--- 5.- Para dibujar nuestra funci�n, asignamos a cada punto del dominio la repre-
---     sentaci�n de su imagen (usando la vista anterior):
-create view plot as
+select representation from FUNCION_SENO   order by x;
+select representation from FUNCION_COSENO order by x;
+select representation from FUNCION_EXP    order by x;
+select representation from FUNCION_RAIZ   order by x;
 
-select puntoDominio, representation 
-from funcion, converter
-where minim<=puntoImagen and maxim>puntoImagen;
-
-select * from plot;
-
+/duplicates off
 /multiline off
 /datalog
