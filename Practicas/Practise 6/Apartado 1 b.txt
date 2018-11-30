@@ -12,11 +12,9 @@ horaInsert := to_char(sysdate,'hh:mi:ss');
     
 IF INSERTING THEN
     INSERT INTO auditoría VALUES ('INSERT', 'pedidos', fechaInsert, horaInsert);
-END IF;
-IF  DELETING THEN
+ELSIF  DELETING THEN
     INSERT INTO auditoría VALUES ('DELETE', 'pedidos', fechaInsert, horaInsert);
-END IF;
-IF UPDATING THEN
+ELSIF UPDATING THEN
     INSERT INTO auditoría VALUES ('UPDATE', 'pedidos', fechaInsert, horaInsert);
 END IF;
 
