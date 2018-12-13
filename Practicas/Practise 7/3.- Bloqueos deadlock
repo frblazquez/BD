@@ -1,0 +1,15 @@
+Explicar el comportamiento de las siguientes transacciones (simultáneas):
+
+// Desde T1:
+
+C:> SET AUTOCOMMIT OFF
+C:> update cuentas set saldo=saldo+100 where cuenta=123
+C:> update cuentas set saldo=saldo+300 where cuenta=456
+
+// Desde T2:
+
+C:> SET AUTOCOMMIT OFF
+C:> update cuentas set saldo=saldo+200 where cuenta=456
+C:> update cuentas set saldo=saldo+400 where cuenta=123
+
+
