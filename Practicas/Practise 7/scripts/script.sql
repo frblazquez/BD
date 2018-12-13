@@ -28,7 +28,8 @@ begin
 end;
 /
 col SCRIPT_COL new_val SCRIPT
-select decode(:v_error,'false','"C:\fernan\docs\docencia\asignaturas\BD DG\2013-2014\Prácticas\6. Práctica 4 Oracle Transacciones\preguntar.sql"','"C:\fernan\docs\docencia\asignaturas\BD DG\2013-2014\Prácticas\6. Práctica 4 Oracle Transacciones\no_preguntar.sql"') as SCRIPT_COL from dual;
+select decode(:v_error,'false','"C:\hlocal\Pr7\scripts\preguntar.sql"',
+                               '"C:\hlocal\Pr7\scripts\no_preguntar.sql"') as SCRIPT_COL from dual;
 print :v_error
 --prompt 'Valor script: '&SCRIPT
 @ &SCRIPT
