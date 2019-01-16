@@ -60,18 +60,18 @@ ALTER TABLE table_name DROP atribute_name;
 
 -- To delete a whole table (CAUTION!):
 DROP TABLE  table_name;
-	-- DUDA! las tablas a las que referencia deben ser borradas antes?? Si. ¿Por qué?
+
 
 2.2.- Tables and relations content modification and deletion:
 
 -- To delete elements:
-DELETE FROM table_name;	-- DUDA! No borra el esquema pero sí todas las tuplas ¿no?
+DELETE FROM table_name;
 DELETE FROM table_name WHERE conditions;
 
 -- To modify the tuples of the relation:
 ---- We can update all the tuples or just those verifying a condition.
-UPDATE table_name SET atributei = expresioni, ... , atributej = expresionj;
-UPDATE table_name SET atributes = expresions WHERE conditions;
+UPDATE table_name SET atributei = expressioni, ... , atributej = expressionj;
+UPDATE table_name SET atributes = expressions WHERE conditions;
     
 -- To insert new elements into "table_name(atribute1_name, ... , atributen_name)":
 ---- We can insert specifying the atributes order or avoid specifying these if we follow
@@ -95,8 +95,8 @@ INSERT INTO table_name VALUES
 
 3.1.- Select instruction:
 -- In the datalog system, we used many instruction direcly related to operations used
--- in relational algebra. SQL however is english-language based. We won't have a proyection
--- instruction, cartesian product, division... Select instruction mostly englobes all of
+-- in relational algebra. SQL however is english-language based. We won't have a projection
+-- instruction, cartesian product, division... Select instruction mostly encompass all of
 -- this operations.
 
 -- General schema:
@@ -148,8 +148,8 @@ SELECT * FROM table1_name EXCEPT    SELECT * FROM table2_name;
 -- relation. Wich conditions are allowed? How can we specify those conditions?
 WHERE ~ Tuples selection predicates ~
 
-- Comparation:           <,>,<=,>=,=,<> (means distinct in sql)
-- Range:                 BETWEEN, NOT BETWEEN	
+- Comparation:           <,>,<=,>=,=,           -- <> means != in sql
+- Range:                 BETWEEN, NOT BETWEEN	-- Needs example BETWEEN 12 and 15
 - Null condition:        IS NULL, IS NOT NULL
 - Content:               IN, NOT IN 			-- Needs example IN SET ~ IN (1,5,10)
 - About other relations: ALL, SOME/ANY
@@ -160,12 +160,12 @@ WHERE ~ Tuples selection predicates ~
 
 3.4.- Ordered output:
 
--- We can specify the atributes we can order by and if we want to order ascendently or
--- descendently. This operation might have a really high time cost.
+-- We can specify an order for the attributes shown.
 ORDER BY ~ Atributes and modifyers ~
 
-ORDER BY atributei ASC, ... , atributej DESC;	-- This request are the same,
-ORDER BY atributei    , ... , atributej DESC;	-- Default ordenation is ascendent
+ORDER BY atributei ASC, ... , atributej;	-- These requests are the same,
+ORDER BY atributei    , ... , atributej;	-- Default ordenation is ascendent
+ORDER BY atributei DESC, ... , atributej;
 
 3.5.- Rename of relations and atributes:
 
@@ -177,7 +177,7 @@ SELECT atribute1_name AS atribute1_newName, ... , atributen_name AS atributen_ne
 SELECT atributes FROM table1_name table1_newName, ... , tablek_name tablek_newName ...
 
 3.6.- Expresions:
--- Many times we won't need an atribute but we'll need a function involving many atributes,
+-- A huge number of times we won't need an atribute but we'll need a function involving many atributes,
 -- we then will have to use agregation functions (we'll discuss about them later) and expressions
 -- such as aritmetic functions or literals. We can also use this expressions inside a condition.
 
@@ -251,7 +251,6 @@ HAVING   conditions
 
 
 4.- SUBREQUESTS:
--- DUDA! revisar el inglés!!
 -- A subrequest is nothing else than a select clause inside another select instruction. This 
 -- subrequest can be placet at select projection list, from or even the where.
 
@@ -322,6 +321,11 @@ request(involving localViews);
 
 6.- SQL RECURSIVE:
 
+CREATE VIEW nat(n) AS
 
-
-
+    WITH naturals(num) as
+        (SELECT 0 FROM DUAL)
+         UNION ALL
+        (SELECT num+1 FROM naturals)
+        
+    SELECT * FROM naturals;

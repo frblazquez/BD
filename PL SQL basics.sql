@@ -12,7 +12,7 @@
     manager system). It's really useful for this but it isn't powerful enough for
     advanced queries and databases maintenance (among others). So we sometimes need
     the tools we have in an structured programming language. This is exactly what
-    PL/SQL is. It is the way we can include SQL in C++ or Java languajes. 
+    PL/SQL is. It is the way we can mix SQL with imperative programming languages. 
 
 Now we know what PL/SQL is we are going to start learning PL/SQL sintax and 
 common tools.
@@ -21,12 +21,12 @@ common tools.
 
 1.0.- Blocks:
 -- We will include sql sentences always inside this blocks, with each block 
--- having a concrete functionallity.
+-- having a concrete functionality.
 
     DECLARE
         --Variables
     BEGIN
-        --SQL sentences
+        --SQL sentences and functionality
     EXCEPTION
         --Exceptions treatment
     END;
@@ -66,7 +66,7 @@ common tools.
         varn typen;
     BEGIN   
         select attribute1, ... , attributen
-        into   var1,       ... , varn
+        into   var1,       ... , varn           -- INTO! Where the query result is stored!
         from table1, ... , tablep
         where ...
            
@@ -84,6 +84,7 @@ common tools.
         ...
         varn typen;
     BEGIN
+    
         update tablei set attribute=operation(var1, ... ,varn) where ...;
         insert into talbej select attributes from ...;
         insert into tablek values (var1, ... , varn);
@@ -128,7 +129,7 @@ common tools.
     FOR counterValue IN [REVERSE] initValue..endValue
     LOOP
         --statements
-    END LOOP;
+    END LOOP;   
     
     -- CounterValue will automatically be declared and should't be inside the
     -- DECLARE statement.
@@ -168,8 +169,8 @@ common tools.
  -> %ISOPEN     - Returns true if the cursor is opened.
         
     Sometimes we want a cursor to depend on some parameters, this is, we want to
-    calculate the select sentence wich result our cursor will point depending on
-    some values. We can create cursors depending on parameters this way:
+    calculate the result of a select sentence wich depends on certain parameters.
+    We can create cursors depending on parameters this way:
     
     CURSOR cursorName(param1 type1, ... , paramN typeN) IS selectSentence(params);
     
@@ -254,7 +255,4 @@ CREATE [OR REPLACE] FUNCTION funcName[(param1 mode1 type1, ... , paramN modeN ty
     END;
     
  -> Mode is the parameter type, IN, OUT OR IN OUT
- 
- 
-2.- CONSTRAINTS:
 
